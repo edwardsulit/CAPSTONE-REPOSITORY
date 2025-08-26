@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
+import { AuthProvider } from '@/lib/auth-context'
+import { AuthWrapper } from '@/components/auth-wrapper'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'Admin Dashboard',
+  description: 'Secure admin dashboard with authentication',
   generator: 'v0.app',
 }
 
@@ -25,7 +27,13 @@ html {
 }
         `}</style>
       </head>
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          <AuthWrapper>
+            {children}
+          </AuthWrapper>
+        </AuthProvider>
+      </body>
     </html>
   )
 }
