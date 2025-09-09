@@ -9,6 +9,7 @@ import tkinter as tk
 from tkinter import filedialog
 from datetime import datetime
 
+
 # ==============================================
 # Helpers: Units
 # ==============================================
@@ -443,60 +444,150 @@ def map_columns_improved(df, target_columns):
             print(f"  {target_col} <- NO MATCH FOUND (best was '{best_match}' with {best_score}%)")
     return column_mapping
 
+def _parse_money_series(s: pd.Series) -> pd.Series:
+    """
+    Parse money-like strings to numbers, handling:
+      - (1,234.56)  -> -1234.56
+      - 1,234.56-   -> -1234.56
+      - 1,234.56 CR -> -1234.56   (DR stays positive)
+      - 1.234,56 (EU) -> 1234.56
+    Returns float dtype with NaN for unparseable.
+    """
+    if s is None:
+        return pd.Series(dtype='float64')
+
+    x = s.astype(str).str.strip()
+
+    # normalize accounting negatives
+    x = x.str.replace(r'^\(([^)]+)\)$', r'-\1', regex=True)           # (123.45) -> -123.45
+    x = x.str.replace(r'^\s*([0-9.,]+)\s*-\s*$', r'-\1', regex=True)  # 123.45-  -> -123.45
+
+    # handle CR/DR markers (prefer CR as negative)
+    has_cr = x.str.contains(r'\bCR\b', case=False, regex=True)
+    x = x.str.replace(r'\b[CD]R\b', '', regex=True, case=False).str.strip()
+    x = x.mask(has_cr, '-' + x)  # make negative if CR
+
+    # keep only digits, comma, dot, minus
+    x = x.str.replace(r'[^\d,.\-]', '', regex=True)
+
+    # If there is exactly one comma and no dot, treat comma as decimal
+    def _commas_to_decimal(t):
+        if t.count(',') == 1 and t.count('.') == 0:
+            t = t.replace('.', '')    # (defensive: remove thousand dots if any)
+            t = t.replace(',', '.')   # decimal comma -> dot
+            return t
+        # Otherwise, drop all commas as thousand separators
+        return t.replace(',', '')
+    x = x.apply(_commas_to_decimal)
+
+    return pd.to_numeric(x, errors='coerce')
+
+
 def clean_data_types_improved(df):
     print("\nCLEANING DATA TYPES:")
     print("-" * 30)
     df_clean = df.copy()
 
-    # Numeric columns
+    # --- numeric columns with accounting-aware parser ---
     numeric_cols = ['Qty', 'Discount', 'Sales', 'Cost', 'Profit']
     for col in numeric_cols:
         if col in df_clean.columns:
             original_count = df_clean[col].notna().sum()
-            df_clean[col] = (
-                df_clean[col].astype(str)
-                .str.replace(r'[^\d.-]', '', regex=True)
-                .replace(['', 'nan', 'none', 'NaN', 'None'], pd.NA)
-            )
-            df_clean[col] = pd.to_numeric(df_clean[col], errors='coerce')
+            if col == 'Qty':
+                # quantities rarely have CR/DR, so simpler parse
+                df_clean[col] = pd.to_numeric(
+                    df_clean[col]
+                        .astype(str)  # <-- close the paren
+                        .str.replace(r'[^\d.\-]', '', regex=True)
+                        .replace(
+                            {'': pd.NA, 'nan': pd.NA, 'none': pd.NA, 'NaN': pd.NA, 'None': pd.NA},
+                            regex=False
+                        ),
+                    errors='coerce'
+)
+
+            else:
+                df_clean[col] = _parse_money_series(df_clean[col])
             cleaned_count = df_clean[col].notna().sum()
             print(f"  {col}: {original_count} -> {cleaned_count} valid values")
 
-    # Dates  — treat 1970-01-01 as missing (common when raw has 0)
-    date_cols = ['Date']
-    for col in date_cols:
-        if col in df_clean.columns:
-            original_count = df_clean[col].notna().sum()
-            df_clean[col] = pd.to_datetime(df_clean[col], errors='coerce', infer_datetime_format=True)
-            epoch_mask = df_clean[col] == pd.Timestamp('1970-01-01')
-            if epoch_mask.any():
-                df_clean.loc[epoch_mask, col] = pd.NaT
-            cleaned_count = df_clean[col].notna().sum()
-            print(f"  {col}: {original_count} -> {cleaned_count} valid dates")
+    # --- dates ---
+    if 'Date' in df_clean.columns:
+        original_count = df_clean['Date'].notna().sum()
+        df_clean['Date'] = pd.to_datetime(df_clean['Date'], errors='coerce', infer_datetime_format=True)
+        epoch_mask = df_clean['Date'] == pd.Timestamp('1970-01-01')
+        if epoch_mask.any():
+            df_clean.loc[epoch_mask, 'Date'] = pd.NaT
+        cleaned_count = df_clean['Date'].notna().sum()
+        print(f"  Date: {original_count} -> {cleaned_count} valid dates")
 
-    # Expiration Date: keep blanks as NaN; valid dates -> YYYY-MM-DD strings
     if 'Expiration Date' in df_clean.columns:
         df_clean['Expiration Date'] = df_clean['Expiration Date'].apply(
             lambda x: pd.NA if (x is None or (isinstance(x, float) and pd.isna(x)) or (isinstance(x, str) and x.strip()=='')) else _normalize_exp_str(str(x))
-        )
-        # Re-assign empty string from _normalize_exp_str to pd.NA
-        df_clean['Expiration Date'] = df_clean['Expiration Date'].apply(lambda x: pd.NA if (isinstance(x, str) and x.strip()=='') else x)
+        ).apply(lambda x: pd.NA if (isinstance(x, str) and x.strip()=='') else x)
 
-    # Text columns (includes Unit)
+    # --- text columns ---
     string_cols = ['Receipt', 'SO', 'Item Code', 'Description', 'Payment', 'Cashier ID', 'Unit']
     for col in string_cols:
         if col in df_clean.columns:
             original_count = df_clean[col].notna().sum()
             df_clean[col] = (
                 df_clean[col].astype(str).str.strip()
-                .replace(['nan', 'none', 'null', '', 'NaN', 'None', 'NULL'], pd.NA)
+                .replace(['nan','none','null','','NaN','None','NULL'], pd.NA)
             )
             if col == 'Unit':
                 df_clean[col] = df_clean[col].str.lower()
+            if col == 'Item Code':
+                df_clean[col] = df_clean[col].str.strip().str.upper()
             cleaned_count = df_clean[col].notna().sum()
             print(f"  {col}: {original_count} -> {cleaned_count} valid values")
 
+    # --- recompute Profit if missing ---
+    if {'Sales','Cost'}.issubset(df_clean.columns):
+        calc_profit = pd.to_numeric(df_clean['Sales'], errors='coerce') - pd.to_numeric(df_clean['Cost'], errors='coerce')
+        if 'Profit' not in df_clean.columns or df_clean['Profit'].isna().any():
+            df_clean['Profit'] = df_clean['Profit'].fillna(calc_profit)
+
     return df_clean
+
+
+
+
+def classify_txn_type(row):
+    # default
+    t = "SALE"
+    desc = str(row.get('Description', '') or '').lower()
+    code = str(row.get('Item Code', '') or '').lower()
+    qty  = pd.to_numeric(row.get('Qty', pd.NA), errors='coerce')
+
+    # adjustments keywords (if they survived filters)
+    if re.search(r'(discount|void|round(?:ing|[-\s]*off)|price\s*adj|adjustment|rebate|change|senior|pwd)', desc):
+        return "ADJUSTMENT"
+
+    # returns: negative qty or obvious words
+    if (pd.notna(qty) and qty < 0) or re.search(r'(return|refund|rtn|rtv)', desc):
+        return "RETURN"
+
+    return t
+
+def _row_hash_fn(r):
+    keys = [
+        str(r.get('Date', '')).strip(),
+        str(r.get('Receipt', '')).strip(),
+        str(r.get('SO', '')).strip(),
+        str(r.get('Item Code', '')).strip(),
+        str(r.get('Qty', '')).strip(),
+        str(r.get('Sales', '')).strip(),
+        str(r.get('Cost', '')).strip(),
+    ]
+    concat = '|'.join(keys)
+    # short, deterministic string id:
+    return pd.util.hash_pandas_object(pd.Series(concat)).astype(str).iloc[0]
+
+
+
+
+
 
 def clean_dataframe_improved(df):
     print("\n" + "="*50)
@@ -662,11 +753,18 @@ def clean_dataframe_improved(df):
         print("\nSample of final cleaned data:")
         print(df_final.head().to_string())
 
-    # Drop helper id from the cleaned output (keep it in errors)
+        # Drop helper id from the cleaned output (keep it in errors)
     if '_row_id' in df_final.columns:
         df_final = df_final.drop(columns=['_row_id'])
 
+    # --- deterministic RowHash for idempotent loads ---
+    df_final['RowHash'] = df_final.apply(_row_hash_fn, axis=1)
+
+    # --- classify transaction type (optional but useful) ---
+    df_final['TxnType'] = df_final.apply(classify_txn_type, axis=1)
+
     return df_final, errors_all
+
 
 # ==============================================
 # I/O helpers
@@ -783,30 +881,19 @@ def get_data_source():
 def fetch_and_clean_sales_data(source):
     csv_content = load_data_from_source(source)
 
+    # --- Header sniff ---
+    header_row = analyze_csv_structure(csv_content)   # index of header
     lines = csv_content.strip().split('\n')
-    print(f"Total lines in file: {len(lines)}")
-    print("First 10 lines (before skipping):")
-    for i, line in enumerate(lines[:10]):
-        print(f"Line {i}: {line}")
-
-    # Skip first 5 rows per prior requirement
-    if len(lines) > 5:
-        csv_from_row_6 = '\n'.join(lines[5:])
-        print(f"\nSkipping first 5 rows. Processing from line 6 onwards...")
-        remaining_lines = lines[5:]
-        for i, line in enumerate(remaining_lines[:5]):
-            print(f"Line {i+6}: {line}")
-    else:
-        print("Warning: File has 5 or fewer lines!")
-        csv_from_row_6 = csv_content
+    print(f"Detected header at line: {header_row}")
+    csv_from_header = '\n'.join(lines[header_row:])
 
     try:
-        df_raw = pd.read_csv(StringIO(csv_from_row_6))
+        df_raw = pd.read_csv(StringIO(csv_from_header))
         print(f"Successfully read CSV with shape: {df_raw.shape}")
     except Exception as e:
         print(f"CSV read failed: {e}")
         try:
-            df_raw = pd.read_csv(StringIO(csv_from_row_6), sep=None, engine='python')
+            df_raw = pd.read_csv(StringIO(csv_from_header), sep=None, engine='python')
             print(f"Successfully read CSV with auto-separator with shape: {df_raw.shape}")
         except Exception as e2:
             print(f"All CSV read attempts failed: {e2}")
@@ -821,17 +908,35 @@ def fetch_and_clean_sales_data(source):
     return df_cleaned, errors_df
 
 if __name__ == "__main__":
+    # Default sample URL (kept for local tests)
     default_url = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/testdata-D3IKHaVvsV4pdgUGLj27PXAagiN6WO.csv"
+    NON_INTERACTIVE = os.getenv("NON_INTERACTIVE", "0") == "1"
+
+    # IMPORTANT: Set this once in your shell/env:
+    #   Local pgAdmin first:
+    #   export DATABASE_URL="postgresql://postgres:admin@localhost:5432/CAPSTONE"
+    #
+    #   Neon later (example):
+    #   export DATABASE_URL="postgresql://USER:PASSWORD@YOURHOST.neon.tech/CAPSTONE?sslmode=require"
+
     try:
+        # -------- source selection (interactive for local, env/CLI for servers) --------
         if len(sys.argv) > 1:
             data_source = sys.argv[1]
             print(f"Using data source from command line: {data_source}")
+        elif NON_INTERACTIVE:
+            print("Running in NON_INTERACTIVE mode...")
+            data_source = default_url
         else:
             data_source = get_data_source()
             if not data_source:
                 print("No data source provided. Using default test data...")
                 data_source = default_url
+
+        # -------- CLEAN --------
         cleaned_df, errors_df = fetch_and_clean_sales_data(data_source)
+
+        # Save local artifacts (handy for debugging / audit)
         if data_source.startswith(('http://', 'https://')):
             output_file = 'cleaned_sales_data_from_url.csv'
         else:
@@ -840,13 +945,33 @@ if __name__ == "__main__":
         save_cleaned_data(cleaned_df, output_file)
         errors_file = os.path.splitext(output_file)[0] + '_errors.xlsx'
         save_error_report(errors_df, errors_file)
+
         print(f"\n✅ Data cleaning completed successfully!")
         print(f"📁 Output file: {output_file}")
-        view_sample = input("\nView a sample of the cleaned data? (y/n): ").strip().lower()
-        if view_sample == 'y':
-            print("\nSample of cleaned data:")
-            print("=" * 80)
-            print(cleaned_df.head(10).to_string(index=False))
+
+        # -------- LOAD (Postgres CAPSTONE) --------
+        # Use the original filename/URL (good for ops.etl_runs)
+        file_name_for_run = data_source if data_source else output_file
+
+        print("\n⏩ Loading cleaned data into Postgres (CAPSTONE)...")
+        # If you haven't run create_schemas_tables.sql yet, run it once manually,
+        # OR pass ensure_schema_once=True below to let the loader create it.
+        run_id = run_full_load(
+            file_name=file_name_for_run,
+            cleaned_df=cleaned_df,
+            errors_df=errors_df,
+            ensure_schema_once=False   # set to True ONLY the first time if you didn't run the SQL
+        )
+        print(f"✅ ETL load completed. run_id = {run_id}")
+
+        # Optional preview (skip in NON_INTERACTIVE mode)
+        if not NON_INTERACTIVE:
+            view_sample = input("\nView a sample of the cleaned data? (y/n): ").strip().lower()
+            if view_sample == 'y':
+                print("\nSample of cleaned data:")
+                print("=" * 80)
+                print(cleaned_df.head(10).to_string1(index=False))
+
     except Exception as e:
         print(f"❌ Error occurred: {str(e)}")
         import traceback

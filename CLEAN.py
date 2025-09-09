@@ -519,20 +519,21 @@ def clean_dataframe_improved(df):
     # -------- capture removals BEFORE mapping --------
     errors_pre = []
 
-    # 1) Remove summary/total rows
-    total_patterns = ['grand total', 'total:', 'subtotal']
+    # 1) Remove summary/total rows (regex + broader phrases)
+    total_patterns = [r'\bgrand\s*total\b', r'\bsub\s*total\b', r'\btotal\b']
     rows_before = len(df_clean)
     for pattern in total_patterns:
         mask = df_clean.astype(str).apply(
-            lambda x: x.str.contains(pattern, case=False, na=False, regex=False)
+            lambda x: x.str.contains(pattern, case=False, na=False, regex=True)
         ).any(axis=1)
         if mask.any():
             removed = df_clean.loc[mask].copy()
-            removed['error_reason'] = f"summary/total row matched '{pattern}'"
+            removed['error_reason'] = f"summary/total row matched /{pattern}/"
             removed['error_stage']  = 'pre-map'
             errors_pre.append(removed)
             df_clean = df_clean.loc[~mask]
     print(f"Removed {rows_before - len(df_clean)} total/summary rows")
+
 
     # 2) Remove completely empty rows
     empty_mask_all = df_clean.isna().all(axis=1)
@@ -571,6 +572,14 @@ def clean_dataframe_improved(df):
     # carry row id for later error tracking
     df_final['_row_id'] = df_clean['_row_id'].copy()
 
+    # Drop any remaining summary rows that slipped through
+    df_final = _drop_summary_rows_after_map(df_final)
+
+    # Recover Sales if mapping missed it (before any other transforms)
+    df_final = _recover_sales_if_empty(df_final, df_clean, column_mapping)
+
+
+
     # Project early removals into target schema so the error file is consistent
     errors_aligned = []
     for e in errors_pre:
@@ -596,6 +605,8 @@ def clean_dataframe_improved(df):
     # -------- unit normalization --------
     df_final, unit_msg = normalize_units_on_df(df_final)
     print(f"✓ {unit_msg}")
+
+    
 
     # -------- type cleaning --------
     df_final = clean_data_types_improved(df_final)
@@ -676,43 +687,6 @@ def clean_dataframe_improved(df):
 
     return df_final, errors_all
 
-    # --- Unit normalization (also infers Unit from Description if missing) ---
-    df_final, unit_msg = normalize_units_on_df(df_final)
-    print(f"✓ {unit_msg}")
-
-    # --- Coerce types ---
-    df_final = clean_data_types_improved(df_final)
-
-    # --- Remove rows missing critical supporting data ---
-    df_final = remove_incomplete_rows(df_final)
-
-    # --- Remove duplicates on key business fields ---
-    dupe_subset = [c for c in ['Date','Receipt','SO','Item Code','Qty','Sales','Cost'] if c in df_final.columns]
-    before = len(df_final)
-    if dupe_subset:
-        df_final = df_final.drop_duplicates(subset=dupe_subset, keep='first')
-    else:
-        df_final = df_final.drop_duplicates(keep='first')
-    print(f"✓ Removed {before - len(df_final)} duplicate rows")
-
-    # --- Remove rows effectively empty across important fields ---
-    important = [c for c in ['Item Code','Description','Qty','Sales','Cost'] if c in df_final.columns]
-    if important:
-        mask_all_null = df_final[important].isna().all(axis=1)
-        removed = int(mask_all_null.sum())
-        if removed:
-            df_final = df_final.loc[~mask_all_null].copy()
-            print(f"✓ Removed {removed} rows with all key fields null")
-
-    # ----- Final summary -----
-    print(f"\n✅ Final cleaned DataFrame: {df_final.shape[0]} rows x {df_final.shape[1]} columns")
-    if not df_final.empty:
-        print("\nSample of final cleaned data:")
-        print(df_final.head().to_string())
-
-    return df_final
-
-
 
 def map_columns_improved(df, target_columns):
     """
@@ -775,6 +749,18 @@ def map_columns_improved(df, target_columns):
                 best_score = score
                 best_match = col
         
+                # --- prefer the actual "Sales" column if present ---
+        if target_col == 'Sales':
+            # hard preference for a literal column named 'Sales' (or very close)
+            preferred_aliases = {
+                'sales', 'sale', 'sales amount', 'sales_amt',
+                'line amount', 'line total', 'extended', 'ext amount'
+            }
+            exact = [c for c in available_cols if str(c).strip().lower() in preferred_aliases]
+            if exact:
+                best_match = exact[0]
+                best_score = 101  # force selection over 'Total'
+
         if best_match and best_score >= 20:
             column_mapping[target_col] = best_match
             print(f"  {target_col} <- '{best_match}' (confidence: {best_score}%)")
@@ -782,6 +768,143 @@ def map_columns_improved(df, target_columns):
             print(f"  {target_col} <- NO MATCH FOUND (best was '{best_match}' with {best_score}%)")
     
     return column_mapping
+
+
+def _parse_money_series(s: pd.Series) -> pd.Series:
+    """
+    Parse money-like strings to numbers, handling:
+      (1,234.56) -> -1234.56
+      1,234.56-  -> -1234.56
+      'CR' (credit) -> negative; 'DR' -> positive
+      EU decimal comma: 1.234,56 -> 1234.56
+    """
+    if s is None:
+        return pd.Series(dtype='float64')
+
+    x = s.astype(str).str.strip()
+
+    # accounting negatives
+    x = x.str.replace(r'^\(([^)]+)\)$', r'-\1', regex=True)          # (123.45) -> -123.45
+    x = x.str.replace(r'^\s*([0-9.,]+)\s*-\s*$', r'-\1', regex=True) # 123.45-  -> -123.45
+
+    # CR/DR markers
+    has_cr = x.str.contains(r'\bCR\b', case=False, regex=True)
+    x = x.str.replace(r'\b[CD]R\b', '', regex=True, case=False).str.strip()
+    x = x.mask(has_cr, '-' + x)
+
+    # keep digits, dot, comma, minus
+    x = x.str.replace(r'[^\d,.\-]', '', regex=True)
+
+    # if one comma and no dot -> treat comma as decimal
+    def _commas_to_decimal(t):
+        if t.count(',') == 1 and t.count('.') == 0:
+            t = t.replace('.', '')
+            t = t.replace(',', '.')
+            return t
+        return t.replace(',', '')
+    x = x.apply(_commas_to_decimal)
+
+    return pd.to_numeric(x, errors='coerce')
+
+def _recover_sales_if_empty(df_final, df_clean, column_mapping):
+    """Fill df_final['Sales'] if mapping produced an empty column (line amounts only)."""
+    if 'Sales' not in df_final.columns:
+        return df_final
+    if df_final['Sales'].notna().any():
+        return df_final
+
+    # --- EARLY GRAB: if the raw data literally has a Sales-like column, use it ---
+    literal_candidates = {
+        'sales', 'sale', 'sales amount', 'sales_amt',
+        'line amount', 'line total', 'extended', 'ext amount'
+    }
+    for col in df_clean.columns:
+        if str(col).strip().lower() in literal_candidates:
+            parsed = _parse_money_series(df_clean[col])
+            if parsed.notna().sum() > 0:
+                df_final['Sales'] = parsed
+                print(f"🔎 Recovered Sales from raw column '{col}' ({parsed.notna().sum()} values).")
+                return df_final
+
+    # --- Fallback: other line-amount names (avoid plain 'total' which is a receipt total) ---
+    candidates = re.compile(
+        r'(sales?(?!\s*tax)|sale\s*amount|sales?\s*(amount|value|price)|'
+        r'line\s*(amount|total)|extended|ext|net\s*(amount|total|sales?)|'
+        r'line\s*price|unit\s*price)',
+        re.I
+    )
+    reserved = set(v for v in column_mapping.values() if v is not None)
+
+    best_col, best_series, best_non_null = None, None, -1
+    for col in df_clean.columns:
+        if col in reserved:
+            continue
+        if not candidates.search(str(col)):
+            continue
+        parsed = _parse_money_series(df_clean[col])
+        nn = parsed.notna().sum()
+        if nn > best_non_null:
+            best_col, best_series, best_non_null = col, parsed, nn
+
+    if best_series is not None and best_non_null > 0:
+        df_final['Sales'] = best_series
+        print(f"🔎 Recovered Sales from raw column '{best_col}' ({best_non_null} values).")
+        return df_final
+
+    # Last resort ONLY if every receipt has <= 1 line (so Payment == line)
+    if 'Payment' in df_final.columns and 'Receipt' in df_final.columns:
+        line_counts = df_final.groupby('Receipt', dropna=False).size()
+        if (line_counts <= 1).all():
+            pay = _parse_money_series(df_final['Payment'])
+            if pay.notna().any():
+                df_final['Sales'] = pay
+                print("🔎 Recovered Sales from 'Payment' (single-line receipts only).")
+                return df_final
+        else:
+            print("⚠ Skipped Payment fallback: multiple lines per receipt detected.")
+
+    print("⚠ Could not recover Sales from raw columns.")
+    return df_final
+
+
+
+def _drop_summary_rows_after_map(df: pd.DataFrame) -> pd.DataFrame:
+    """Remove receipt-level summary rows that slipped through mapping."""
+    if df.empty:
+        return df
+
+    def _is_blank(s):
+        return s.isna() | (s.astype(str).str.strip() == '')
+
+    # rows that literally say "total / subtotal / grand total"
+    is_total_word = pd.Series(False, index=df.index)
+    for c in ('Description', 'Item Code', 'Receipt', 'SO'):
+        if c in df.columns:
+            is_total_word |= df[c].astype(str).str.strip().str.lower().isin(
+                ['total', 'subtotal', 'grand total']
+            )
+
+    qty = pd.to_numeric(df.get('Qty'), errors='coerce') if 'Qty' in df.columns else pd.Series(index=df.index, dtype='float64')
+    num_cols = [c for c in ['Qty','Discount','Sales','Cost','Profit'] if c in df.columns]
+    has_any_numeric = pd.DataFrame({c: pd.to_numeric(df[c], errors='coerce') for c in num_cols}).notna().any(axis=1)
+
+    ic   = df.get('Item Code')
+    desc = df.get('Description')
+
+    mask = (
+        ( (_is_blank(ic) if ic is not None else True) &
+          ( (_is_blank(desc) if desc is not None else True) | is_total_word ) )
+        & qty.isna()                  # no line quantity
+        & has_any_numeric             # but has numeric totals present
+    )
+
+    n = int(mask.sum())
+    if n:
+        print(f"✓ Dropped {n} summary/total rows after mapping.")
+        return df.loc[~mask].copy()
+    return df
+
+
 
 def clean_data_types_improved(df):
     """
@@ -794,20 +917,23 @@ def clean_data_types_improved(df):
     df_clean = df.copy()
 
     # Numeric columns
+        # Numeric columns
     numeric_cols = ['Qty', 'Discount', 'Sales', 'Cost', 'Profit']
     for col in numeric_cols:
         if col in df_clean.columns:
             original_count = df_clean[col].notna().sum()
-
-            df_clean[col] = (
-                df_clean[col].astype(str)
-                .str.replace(r'[^\d.-]', '', regex=True)
-                .replace(['', 'nan', 'none', 'NaN', 'None'], pd.NA)
-            )
-            df_clean[col] = pd.to_numeric(df_clean[col], errors='coerce')
-
+            if col == 'Qty':
+                df_clean[col] = pd.to_numeric(
+                    df_clean[col].astype(str)
+                        .str.replace(r'[^\d.\-]', '', regex=True)
+                        .replace({'': pd.NA, 'nan': pd.NA, 'none': pd.NA, 'NaN': pd.NA, 'None': pd.NA}),
+                    errors='coerce'
+                )
+            else:
+                df_clean[col] = _parse_money_series(df_clean[col])
             cleaned_count = df_clean[col].notna().sum()
             print(f"  {col}: {original_count} -> {cleaned_count} valid values")
+
 
     # Dates  — treat 1970-01-01 as missing (common when raw has 0)
     date_cols = ['Date', 'Expiration Date']
