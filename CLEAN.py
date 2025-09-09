@@ -375,11 +375,10 @@ def remove_incomplete_rows(df):
 
     initial_count = len(df_clean)
 
-    # Define critical supporting columns that should have data
     supporting_columns = ['Item Code', 'Description']
     financial_columns = ['Sales', 'Cost', 'Profit']
 
-    # Find rows where financial data exists but supporting data is missing
+    # 1) Financial data present but missing supporting fields
     rows_to_remove = []
     for idx in df_clean.index:
         has_financial_data = any(
@@ -407,7 +406,7 @@ def remove_incomplete_rows(df):
     else:
         print("✓ No incomplete rows found - all data appears complete")
 
-    # Additional check: Remove rows where ALL important columns are empty
+    # 2) All important columns empty (NaN)
     important_columns = ['Item Code', 'Description', 'Qty', 'Sales', 'Cost']
     available_important = [c for c in important_columns if c in df_clean.columns]
     if available_important:
@@ -420,14 +419,84 @@ def remove_incomplete_rows(df):
             df_clean = df_clean.loc[~empty_mask]
             print(f"✓ Removed {int(empty_mask.sum())} completely empty data rows")
 
+    # 3) Placeholder/header rows (e.g., "Account : ...") – no real transaction
+    num_cols = [c for c in ['Qty', 'Sales', 'Cost', 'Profit'] if c in df_clean.columns]
+    if {'Item Code', 'Description'}.issubset(df_clean.columns) and len(num_cols) > 0:
+        ic   = df_clean['Item Code'].astype('string').str.strip()
+        desc = df_clean['Description'].astype('string').str.strip()
+
+        ic_digits_only = ic.str.fullmatch(r'\d+')
+        ic_non_numeric = ic.notna() & ~ic_digits_only
+        account_like   = ic.str.contains(r'^(account|customer|member)\s*:?', case=False, na=False)
+        desc_blank     = desc.isna() | (desc == '')
+        numeric_zeros  = (
+            df_clean[num_cols]
+            .apply(pd.to_numeric, errors='coerce')
+            .fillna(0)
+            .eq(0)
+            .all(axis=1)
+        )
+        placeholder_mask = numeric_zeros & (ic_non_numeric | desc_blank | account_like)
+
+        if placeholder_mask.any():
+            removed3 = df_clean.loc[placeholder_mask].copy()
+            removed3['error_reason'] = 'placeholder/non-item row (e.g., header like "Account : ...")'
+            removed3['error_stage']  = 'remove_incomplete_rows'
+            errors.append(removed3)
+            df_clean = df_clean.loc[~placeholder_mask]
+            print(f"✓ Removed {int(placeholder_mask.sum())} placeholder/non-item rows")
+
+    # 4) Non-item adjustments (e.g., Sales Discount / SD / VOID / rounding)
+    fin_cols = [c for c in ['Sales', 'Cost', 'Profit'] if c in df_clean.columns]
+    if fin_cols:
+        fin_zero = (
+            df_clean[fin_cols]
+            .apply(pd.to_numeric, errors='coerce')
+            .fillna(0)
+            .eq(0)
+            .all(axis=1)
+        )
+        desc_l = (
+            df_clean['Description'].astype('string').str.lower().str.strip()
+            if 'Description' in df_clean.columns else
+            pd.Series('', index=df_clean.index, dtype='string')
+        )
+        ic_l = (
+            df_clean['Item Code'].astype('string').str.lower().str.strip()
+            if 'Item Code' in df_clean.columns else
+            pd.Series('', index=df_clean.index, dtype='string')
+        )
+
+        kw_desc  = r'(sales\s*discount|^discount$|less\s*discount|void|cancel|round(?:ing|[-\s]*off)?|change|senior|pwd|rebate|price\s*adj|adjustment)'
+        kw_codes = r'^(sd|disc|discount|void|sc|pwd|rebate)$'
+
+        is_adjustment = desc_l.str.contains(kw_desc, na=False) | ic_l.str.match(kw_codes, na=False)
+        adj_mask = fin_zero & is_adjustment
+
+        if adj_mask.any():
+            removed_adj = df_clean.loc[adj_mask].copy()
+            removed_adj['error_reason'] = 'non-item adjustment (e.g., Sales Discount/VOID/rounding)'
+            removed_adj['error_stage']  = 'remove_incomplete_rows'
+            errors.append(removed_adj)
+            df_clean = df_clean.loc[~adj_mask]
+            print(f"✓ Removed {int(adj_mask.sum())} non-item adjustment rows")
+
+    # --- Finalize & return ---
     final_count = len(df_clean)
     print(f"\nData validation summary:")
     print(f"  Initial rows: {initial_count}")
     print(f"  Removed rows: {initial_count - final_count}")
     print(f"  Final rows: {final_count}")
 
-    errors_df = pd.concat(errors, ignore_index=True) if errors else pd.DataFrame(columns=list(df.columns) + ['error_reason','error_stage'])
+    errors_df = (
+        pd.concat(errors, ignore_index=True)
+        if errors
+        else pd.DataFrame(columns=list(df_clean.columns) + ['error_reason', 'error_stage'])
+    )
+
     return df_clean, errors_df
+
+
 
 
 def clean_dataframe_improved(df):
@@ -454,7 +523,9 @@ def clean_dataframe_improved(df):
     total_patterns = ['grand total', 'total:', 'subtotal']
     rows_before = len(df_clean)
     for pattern in total_patterns:
-        mask = df_clean.astype(str).apply(lambda x: x.str.contains(pattern, case=False, na=False, regex=False)).any(axis=1)
+        mask = df_clean.astype(str).apply(
+            lambda x: x.str.contains(pattern, case=False, na=False, regex=False)
+        ).any(axis=1)
         if mask.any():
             removed = df_clean.loc[mask].copy()
             removed['error_reason'] = f"summary/total row matched '{pattern}'"
@@ -504,7 +575,7 @@ def clean_dataframe_improved(df):
     errors_aligned = []
     for e in errors_pre:
         aligned = project_to_target(e, column_mapping, target_columns)
-        aligned['_row_id']     = e['_row_id'].values
+        aligned['_row_id']      = e['_row_id'].values
         aligned['error_reason'] = e['error_reason'].values
         aligned['error_stage']  = e['error_stage'].values
         errors_aligned.append(aligned)
@@ -568,7 +639,30 @@ def clean_dataframe_improved(df):
         errors_all.append(errs_incomplete)
     if errors_post:
         errors_all.append(pd.concat(errors_post, ignore_index=True))
-    errors_all = pd.concat(errors_all, ignore_index=True) if errors_all else pd.DataFrame(columns=target_columns + ['_row_id','error_reason','error_stage'])
+    errors_all = pd.concat(errors_all, ignore_index=True) if errors_all else pd.DataFrame(
+        columns=target_columns + ['_row_id','error_reason','error_stage']
+    )
+
+    # --- Fill-down for Receipt and SO (carry values into blanks) ---
+    for c in ('Receipt', 'SO'):
+        if c in df_final.columns:
+            df_final[c] = (
+                df_final[c]
+                .astype('string')
+                .replace({'': pd.NA, 'nan': pd.NA, 'NaN': pd.NA, 'None': pd.NA})
+                .ffill()
+            )
+
+    # (optional) also fill-down in the errors table so auditing is easier
+    if not errors_all.empty:
+        for c in ('Receipt', 'SO'):
+            if c in errors_all.columns:
+                errors_all[c] = (
+                    errors_all[c]
+                    .astype('string')
+                    .replace({'': pd.NA, 'nan': pd.NA, 'NaN': pd.NA, 'None': pd.NA})
+                    .ffill()
+                )
 
     # -------- final summary --------
     print(f"\n✅ Final cleaned DataFrame: {df_final.shape[0]} rows x {df_final.shape[1]} columns")
@@ -582,9 +676,6 @@ def clean_dataframe_improved(df):
 
     return df_final, errors_all
 
-    
-
-    # --- Unit normalization (also infers Unit from Description if missing) ---
     # --- Unit normalization (also infers Unit from Description if missing) ---
     df_final, unit_msg = normalize_units_on_df(df_final)
     print(f"✓ {unit_msg}")
@@ -695,52 +786,59 @@ def map_columns_improved(df, target_columns):
 def clean_data_types_improved(df):
     """
     Improved data type cleaning with better error handling.
+    Includes: convert epoch 1970-01-01 dates to NaT.
     """
     print("\nCLEANING DATA TYPES:")
     print("-" * 30)
 
     df_clean = df.copy()
 
-    # Numeric columns: DO NOT include 'Unit' here
+    # Numeric columns
     numeric_cols = ['Qty', 'Discount', 'Sales', 'Cost', 'Profit']
     for col in numeric_cols:
         if col in df_clean.columns:
             original_count = df_clean[col].notna().sum()
 
-            df_clean[col] = df_clean[col].astype(str)
-            # Remove currency symbols, commas, and other non-numeric chars (keep . and -)
-            df_clean[col] = df_clean[col].str.replace(r'[^\d.-]', '', regex=True)
-            # Replace empty strings and 'nan' with NaN
-            df_clean[col] = df_clean[col].replace(['', 'nan', 'none'], pd.NA)
-            # Convert to numeric
+            df_clean[col] = (
+                df_clean[col].astype(str)
+                .str.replace(r'[^\d.-]', '', regex=True)
+                .replace(['', 'nan', 'none', 'NaN', 'None'], pd.NA)
+            )
             df_clean[col] = pd.to_numeric(df_clean[col], errors='coerce')
 
             cleaned_count = df_clean[col].notna().sum()
             print(f"  {col}: {original_count} -> {cleaned_count} valid values")
 
-    # Dates
+    # Dates  — treat 1970-01-01 as missing (common when raw has 0)
     date_cols = ['Date', 'Expiration Date']
     for col in date_cols:
         if col in df_clean.columns:
             original_count = df_clean[col].notna().sum()
             df_clean[col] = pd.to_datetime(df_clean[col], errors='coerce', infer_datetime_format=True)
+
+            epoch_mask = df_clean[col] == pd.Timestamp('1970-01-01')
+            if epoch_mask.any():
+                df_clean.loc[epoch_mask, col] = pd.NaT
+
             cleaned_count = df_clean[col].notna().sum()
             print(f"  {col}: {original_count} -> {cleaned_count} valid dates")
 
-    # Text columns (now includes Unit)
+    # Text columns (includes Unit)
     string_cols = ['Receipt', 'SO', 'Item Code', 'Description', 'Payment', 'Cashier ID', 'Unit']
     for col in string_cols:
         if col in df_clean.columns:
             original_count = df_clean[col].notna().sum()
-            df_clean[col] = df_clean[col].astype(str).str.strip()
-            df_clean[col] = df_clean[col].replace(['nan', 'none', 'null', '', 'NaN'], pd.NA)
-            # Optional: force lowercase for consistency (Unit already canonicalized earlier)
+            df_clean[col] = (
+                df_clean[col].astype(str).str.strip()
+                .replace(['nan', 'none', 'null', '', 'NaN', 'None', 'NULL'], pd.NA)
+            )
             if col == 'Unit':
                 df_clean[col] = df_clean[col].str.lower()
             cleaned_count = df_clean[col].notna().sum()
             print(f"  {col}: {original_count} -> {cleaned_count} valid values")
 
     return df_clean
+
 
 def save_error_report(errors_df, filename='cleaning_errors.xlsx'):
     """

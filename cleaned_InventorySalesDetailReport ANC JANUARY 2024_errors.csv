@@ -2865,7 +2865,7 @@ Grand Total,,,,,13594,,"946,911.94",,,"397,427.20","179,752.53","934,031.76",,13
 ,,,,,1970-01-01 00:00:00.000013582,,<na>,,,125.32,99.93,,,13582,financial data present but missing supporting fields,remove_incomplete_rows
 ,,,,,1970-01-01 00:00:00.000013586,,<na>,,,32.73,28.08,,,13586,financial data present but missing supporting fields,remove_incomplete_rows
 ,,,,,1970-01-01 00:00:00.000013591,,<na>,,,80.0,12.5,,,13591,financial data present but missing supporting fields,remove_incomplete_rows
-,,,,,1970-01-01 00:00:00,,<na>,,,,,,,0,all important fields empty,remove_incomplete_rows
+,,,,,,,<na>,,,,,,,0,all important fields empty,remove_incomplete_rows
 ,,,,,1970-01-01 00:00:00.000000003,,<na>,,,,,,,3,all important fields empty,remove_incomplete_rows
 ,,,,,1970-01-01 00:00:00.000000004,,<na>,,,,,,,4,all important fields empty,remove_incomplete_rows
 ,,,,,1970-01-01 00:00:00.000000007,,<na>,,,,,,,7,all important fields empty,remove_incomplete_rows
@@ -8689,140 +8689,171 @@ Grand Total,,,,,13594,,"946,911.94",,,"397,427.20","179,752.53","934,031.76",,13
 ,,,,,1970-01-01 00:00:00.000013593,,<na>,,,,,,,13593,all important fields empty,remove_incomplete_rows
 ,,,,,1970-01-01 00:00:00.000013595,,<na>,,,,,,,13595,all important fields empty,remove_incomplete_rows
 ,,,,,1970-01-01 00:00:00.000013596,,<na>,,,,,,,13596,all important fields empty,remove_incomplete_rows
-,,,,,1970-01-01 00:00:00.000000329,,<na>,,,0.0,0.0,,,329,duplicate row,duplicates
-2024-01-02 00:00:00,,,4807788561275,NASOCLEAR (SODIUM CHLORIDE0 0.65% SALINE SOLUTION,2030-03-25 00:00:00,1.0,pcs,0.0,,83.01,8.49,,camille,346,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000000385,,<na>,,,0.0,0.0,,,385,duplicate row,duplicates
-2024-01-02 00:00:00,,,4807788561275,NASOCLEAR (SODIUM CHLORIDE0 0.65% SALINE SOLUTION,2030-05-25 00:00:00,1.0,pcs,0.0,,83.01,8.49,,camille,421,duplicate row,duplicates
-2024-01-02 00:00:00,,,4800046000844,VIVALYTE PLUS APPLE 4.8G SACHET,2030-05-25 00:00:00,5.0,pcs,0.0,,13.87,9.4,,camille,444,duplicate row,duplicates
-2024-01-02 00:00:00,,,4801981126866,WILKINS PURE 330ML,1970-01-01 00:00:00.000000493,1.0,pcs,0.0,,7.2,3.8,,camille,493,duplicate row,duplicates
-2024-01-02 00:00:00,,,79206034723,MICROPORE 1/2 INCH,2001-05-26 00:00:00,1.0,pcs,0.0,,17.5,7.5,,camille,603,duplicate row,duplicates
-2024-01-02 00:00:00,,,4801981126866,WILKINS PURE 330ML,1970-01-01 00:00:00.000000669,1.0,pcs,0.0,,7.2,3.8,,camille,669,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000000774,,<na>,,,0.0,0.0,,,774,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000000922,,<na>,,,0.0,0.0,,,922,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000000942,,<na>,,,0.0,0.0,,,942,duplicate row,duplicates
-2024-01-03 00:00:00,,,4806506740022,ORAHEX REGULAR 120ML,2001-08-25 00:00:00,1.0,pcs,0.0,,109.33,21.92,,camille,989,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000001007,,<na>,,,0.0,0.0,,,1007,duplicate row,duplicates
-2024-01-04 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000001244,1.0,pcs,0.0,,0.0,0.0,,camille,1244,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000001390,,<na>,,,0.0,0.0,,,1390,duplicate row,duplicates
-2024-01-04 00:00:00,,,4807788519849,ALNIX 2.5MG DROP 10ML,2030-04-25 00:00:00,1.0,pcs,0.0,,186.46,16.54,,camille,1407,duplicate row,duplicates
-2024-01-04 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000001590,1.0,pcs,0.0,,0.0,0.0,,camille,1590,duplicate row,duplicates
-2024-01-05 00:00:00,,,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000001709,1.0,pcs,0.0,,15.16,3.34,,camille,1709,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000001890,,<na>,,,0.0,0.0,,,1890,duplicate row,duplicates
-2024-01-05 00:00:00,,,4806532560199,NEOPRED 20MG/5ML 60ML SYRUP,2028-02-25 00:00:00,1.0,pcs,0.0,,271.7,41.3,,camille,1902,duplicate row,duplicates
-2024-01-05 00:00:00,,,4806532560199,NEOPRED 20MG/5ML 60ML SYRUP,2028-02-25 00:00:00,1.0,pcs,0.0,,271.7,41.3,,camille,1917,duplicate row,duplicates
-2024-01-05 00:00:00,,,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000002056,1.0,pcs,0.0,,15.16,3.34,,camille,2056,duplicate row,duplicates
-2024-01-05 00:00:00,,,4800131592759,BIOGENIC (ISOPROPYL ALCOHOL) 70% 50ML SPRAY,2001-11-25 00:00:00,1.0,pcs,0.0,,25.46,8.29,,camille,2071,duplicate row,duplicates
-2024-01-05 00:00:00,,,4807788561688,BIOGESIC (PARACETAMOL) 500MG TAB,2001-02-27 00:00:00,10.0,pcs,0.0,,4.05,2.0,,camille,2129,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000002317,,<na>,,,0.0,0.0,,,2317,duplicate row,duplicates
-2024-01-06 00:00:00,,,4800135005903,PH CARE FLORAL CLEAN 50ML,2030-06-28 00:00:00,1.0,pcs,0.0,,46.73,9.27,,camille,2559,duplicate row,duplicates
-2024-01-06 00:00:00,,,8851198038526,STREPSILS LOZ ORANGE 8s,2030-08-26 00:00:00,1.0,pcs,0.0,,64.0,6.5,,camille,2562,duplicate row,duplicates
-2024-01-06 00:00:00,,,4987176013491,VICKS INHALER KEY CHAIN,2001-06-24 00:00:00,1.0,pcs,0.0,,83.8,12.2,,camille,2646,duplicate row,duplicates
-2024-01-06 00:00:00,,,4807788526762,BIOFLU (PENYLEPHINE + CHLORPHENAMINE + PARACETAMOL) TAB,2025-01-24 00:00:00,3.0,pcs,0.0,,7.61,2.67,,camille,2677,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000002697,,<na>,,,0.0,0.0,,,2697,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000002864,,<na>,,,0.0,0.0,,,2864,duplicate row,duplicates
-2024-01-08 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000003183,1.0,pcs,0.0,,0.0,0.0,,camille,3183,duplicate row,duplicates
-2024-01-08 00:00:00,,,4801981126866,WILKINS PURE 330ML,1970-01-01 00:00:00.000003311,1.0,pcs,0.0,,7.2,3.8,,camille,3311,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000003316,,<na>,,,0.0,0.0,,,3316,duplicate row,duplicates
-2024-01-08 00:00:00,,,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000003373,1.0,pcs,0.0,,15.16,3.34,,camille,3373,duplicate row,duplicates
-2024-01-08 00:00:00,,,4806504260638,APPEVIT 60ML SYRUP,2030-08-24 00:00:00,1.0,pcs,0.0,,175.0,17.5,,camille,3400,duplicate row,duplicates
-2024-01-08 00:00:00,,,4806501283142,WHITE FLOWER C#4 2.5ML,2001-04-27 00:00:00,1.0,pcs,0.0,,45.7,8.2,,camille,3447,duplicate row,duplicates
-2024-01-09 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000003670,1.0,pcs,0.0,,0.0,0.0,,camille,3670,duplicate row,duplicates
-2024-01-09 00:00:00,,,8851198028527,STREPSILS HONEY LEMON (DICHLOROBENZYL ALCOHOL + AMYLMETACRESOL + ASCORBIC ACID) 8,2014-03-25 00:00:00,1.0,pcs,0.0,,63.99,6.51,,camille,3675,duplicate row,duplicates
-2024-01-09 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000003721,1.0,pcs,0.0,,0.0,0.0,,camille,3721,duplicate row,duplicates
-2024-01-09 00:00:00,,,4806037101873,ACETYPHIL (ACETYLCYSTEINE) 600MG SACHET,1970-01-01 00:00:00.000003794,6.0,pcs,0.2,,11.0,14.16,,camille,3794,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000003821,,<na>,,,0.0,0.0,,,3821,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000003849,,<na>,,,0.0,0.0,,,3849,duplicate row,duplicates
-2024-01-09 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000003935,1.0,pcs,0.0,,0.0,0.0,,camille,3935,duplicate row,duplicates
-2024-01-09 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000003944,1.0,pcs,0.0,,0.0,0.0,,camille,3944,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000004052,,<na>,,,0.0,0.0,,,4052,duplicate row,duplicates
-2024-01-10 00:00:00,,,8904186000521,TRIMEBET (TRIMETAZIDINE) 35G TAB,2001-05-24 00:00:00,10.0,pcs,0.2,,1.78,58.2,,camille,4156,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000004198,,<na>,,,0.0,0.0,,,4198,duplicate row,duplicates
-,,,Account : PETRONILO V. MENDOZA,,1970-01-01 00:00:00.000004464,,<na>,,,,,,,4464,duplicate row,duplicates
-2024-01-10 00:00:00,,,8996001600269,LE MINERALE 600ML,2030-01-25 00:00:00,1.0,pcs,0.0,,9.2,5.8,,camille,4483,duplicate row,duplicates
-2024-01-10 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000004573,1.0,pcs,0.0,,0.0,0.0,,camille,4573,duplicate row,duplicates
-2024-01-10 00:00:00,,,79206034723,MICROPORE 1/2 INCH,2001-05-26 00:00:00,1.0,pcs,0.0,,17.5,7.5,,camille,4579,duplicate row,duplicates
-2024-01-11 00:00:00,,,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000004734,1.0,pcs,0.0,,15.16,3.34,,camille,4734,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000004785,,<na>,,,0.0,0.0,,,4785,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000004799,,<na>,,,0.0,0.0,,,4799,duplicate row,duplicates
-2024-01-11 00:00:00,,,4801981107971,WILKINS PURE 500ML,2030-05-24 00:00:00,1.0,pcs,0.0,,9.38,8.63,,camille,4973,duplicate row,duplicates
-2024-01-11 00:00:00,,,4801981107971,WILKINS PURE 500ML,2030-05-24 00:00:00,1.0,pcs,0.0,,9.38,8.63,,camille,4993,duplicate row,duplicates
-2024-01-11 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000005025,1.0,pcs,0.0,,0.0,0.0,,camille,5025,duplicate row,duplicates
-2024-01-11 00:00:00,,,48032742,JOHNSONS WHITE BABY POWDER 25G,2030-05-26 00:00:00,1.0,pcs,0.0,,12.45,2.55,,camille,5070,duplicate row,duplicates
-2024-01-12 00:00:00,,,8851198028527,STREPSILS LOZ HONEY LEMON 8s,2030-08-26 00:00:00,1.0,pcs,0.0,,63.99,6.51,,camille,5338,duplicate row,duplicates
-,,,Account : GAIL PAOLO RIMANDO,,1970-01-01 00:00:00.000005407,,<na>,,,,,,,5407,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000005448,,<na>,,,0.0,0.0,,,5448,duplicate row,duplicates
-2024-01-12 00:00:00,,,4806502352588,FEMME FACIAL TISSUE UNSCENTED,1970-01-01 00:00:00.000005465,1.0,pcs,0.0,,26.75,2.75,,camille,5465,duplicate row,duplicates
-2024-01-12 00:00:00,,,8902269016674,ALCLAV 625MG TAB,1970-01-01 00:00:00.000005504,6.0,pcs,0.0,,7.84,84.96,,camille,5504,duplicate row,duplicates
-2024-01-13 00:00:00,,,4800011000039,MAMA&#039;S LOVE COTTON BUDS 200 TIPS,1970-01-01 00:00:00.000005829,1.0,pcs,0.0,,15.77,6.13,,camille,5829,duplicate row,duplicates
-2024-01-13 00:00:00,,,9314057002629,DIFFLAM LOZENGES 3MG LOZ,2030-11-24 00:00:00,6.0,pcs,0.0,,29.21,36.24,,camille,5855,duplicate row,duplicates
-2024-01-13 00:00:00,,,4806512120184,CANDIVA 10MG/G (1%W/W) CREAM,1970-01-01 00:00:00.000005960,1.0,pcs,0.0,,155.25,31.25,,camille,5960,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000006115,,<na>,,,0.0,0.0,,,6115,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000006223,,<na>,,,0.0,0.0,,,6223,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000006244,,<na>,,,0.0,0.0,,,6244,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000006383,,<na>,,,0.0,0.0,,,6383,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000006387,,<na>,,,0.0,0.0,,,6387,duplicate row,duplicates
-2024-01-15 00:00:00,,,4987176600769,VICKS VAPORUB 5G,2030-08-25 00:00:00,1.0,pcs,0.0,,30.39,6.11,,camille,6434,duplicate row,duplicates
-2024-01-15 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000006582,1.0,pcs,0.0,,0.0,0.0,,camille,6582,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000006698,,<na>,,,0.0,0.0,,,6698,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000006706,,<na>,,,0.0,0.0,,,6706,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000006719,,<na>,,,0.0,0.0,,,6719,duplicate row,duplicates
-2024-01-15 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000006729,1.0,pcs,0.0,,0.0,0.0,,camille,6729,duplicate row,duplicates
-2024-01-15 00:00:00,,,4806502163931,SANICARE CLEANSING WIPES - LAVENDER 80 SHEETS,2030-06-24 00:00:00,1.0,pcs,0.0,,106.55,1.45,,camille,6744,duplicate row,duplicates
-2024-01-16 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000006983,1.0,pcs,0.0,,0.0,0.0,,camille,6983,duplicate row,duplicates
-2024-01-16 00:00:00,,,4807788561688,BIOGESIC 500MG TAB,2030-07-27 00:00:00,20.0,pcs,0.0,,4.05,4.0,,camille,7001,duplicate row,duplicates
-2024-01-16 00:00:00,,,4806532560199,NEOPRED 20MG/5ML 60ML SYRUP,2030-10-26 00:00:00,1.0,pcs,0.0,,260.0,53.0,,camille,7080,duplicate row,duplicates
-2024-01-16 00:00:00,,,61132716035,SURGICAL OR CAP,1970-01-01 00:00:00.000007117,1.0,pcs,0.0,,1.0,1.1,,camille,7117,duplicate row,duplicates
-2024-01-16 00:00:00,,,4806524149203,SURE-GUARD LATEX SURGICAL GLOVES 8.0 PAIR,1970-01-01 00:00:00.000007123,1.0,pcs,0.0,,15.6,16.4,,camille,7123,duplicate row,duplicates
-2024-01-16 00:00:00,,,61132716035,SURGICAL OR CAP,1970-01-01 00:00:00.000007154,1.0,pcs,0.0,,1.0,1.1,,camille,7154,duplicate row,duplicates
-2024-01-16 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000007254,1.0,pcs,0.0,,0.0,0.0,,camille,7254,duplicate row,duplicates
-2024-01-16 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000007337,1.0,pcs,0.0,,0.0,0.0,,camille,7337,duplicate row,duplicates
-,,,Account : PETRONILO V. MENDOZA JR,,1970-01-01 00:00:00.000007355,,<na>,,,,,,,7355,duplicate row,duplicates
-2024-01-16 00:00:00,,,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000007360,1.0,pcs,0.0,,15.16,3.34,,camille,7360,duplicate row,duplicates
-2024-01-16 00:00:00,,,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000007394,1.0,pcs,0.0,,15.16,3.34,,camille,7394,duplicate row,duplicates
-2024-01-17 00:00:00,,,50808076,"TOPCARE TONGUE DEPRESSOR 6"" STERILE",2004-01-27 00:00:00,10.0,pcs,0.0,,1.1,19.0,,camille,7437,duplicate row,duplicates
-2024-01-17 00:00:00,,,74329007,KING MED DISPOSABLE SYRINGE 10CC,1970-01-01 00:00:00.000007438,5.0,pcs,0.0,,3.5,22.5,,camille,7438,duplicate row,duplicates
-2024-01-17 00:00:00,,,4807788561688,BIOGESIC 500MG TAB,2001-10-25 00:00:00,10.0,pcs,0.0,,4.05,2.0,,camille,7447,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000007575,,<na>,,,0.0,0.0,,,7575,duplicate row,duplicates
-2024-01-18 00:00:00,,,4806532560199,NEOPRED 20MG/5ML 60ML SYRUP,2031-01-24 00:00:00,1.0,pcs,0.0,,260.0,53.0,,camille,8053,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000008214,,<na>,,,0.0,0.0,,,8214,duplicate row,duplicates
-2024-01-19 00:00:00,,,4800348114515,BREZU (PROCATEROL) 5MCG/ML 60ML SYR,2021-03-25 00:00:00,2.0,pcs,0.0,,193.64,82.72,,camille,8567,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000008925,,<na>,,,0.0,0.0,,,8925,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000008943,,<na>,,,0.0,0.0,,,8943,duplicate row,duplicates
-,,,Account : GAIL PAOLO RIMANDO,,1970-01-01 00:00:00.000008999,,<na>,,,,,,,8999,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000009004,,<na>,,,0.0,0.0,,,9004,duplicate row,duplicates
-2024-01-20 00:00:00,,,4800350107024,MEPTIN (PROCATEROL HYDROCHLORIDE) 25MG TAB,1970-01-01 00:00:00.000009054,14.0,pcs,0.0,,12.81,23.66,,camille,9054,duplicate row,duplicates
-2024-01-20 00:00:00,,,4800011000039,MAMA&#039;S LOVE COTTON BUDS 200 TIPS,1970-01-01 00:00:00.000009064,1.0,pcs,0.0,,15.77,6.13,,camille,9064,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000009336,,<na>,,,0.0,0.0,,,9336,duplicate row,duplicates
-2024-01-22 00:00:00,,,4807788561688,BIOGESIC 500MG TAB,2001-10-25 00:00:00,10.0,pcs,0.0,,4.05,2.0,,camille,9550,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000009639,,<na>,,,0.0,0.0,,,9639,duplicate row,duplicates
-2024-01-22 00:00:00,,,4800348114515,BREZU (PROCATEROL) 5MCG/ML 60ML SYR,2030-08-26 00:00:00,1.0,pcs,0.0,,193.64,41.36,,camille,9715,duplicate row,duplicates
-2024-01-22 00:00:00,,,8904186000521,TRIMEBET (TRIMETAZIDINE) 35MG TAB,2001-08-24 00:00:00,10.0,pcs,0.2,,1.78,58.2,,camille,9762,duplicate row,duplicates
-2024-01-22 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000009766,1.0,pcs,0.0,,0.0,0.0,,camille,9766,duplicate row,duplicates
-2024-01-22 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000009800,1.0,pcs,0.0,,0.0,0.0,,camille,9800,duplicate row,duplicates
-2024-01-22 00:00:00,,,4807788561688,BIOGESIC 500MG TAB,2030-07-27 00:00:00,10.0,pcs,0.0,,4.05,2.0,,camille,9881,duplicate row,duplicates
-2024-01-22 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000009906,1.0,pcs,0.0,,0.0,0.0,,camille,9906,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000010210,,<na>,,,0.0,0.0,,,10210,duplicate row,duplicates
-2024-01-23 00:00:00,,,90934341121,ISOLATION GOWN,1970-01-01 00:00:00.000010219,2.0,pcs,0.0,,120.0,260.0,,camille,10219,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000010238,,<na>,,,0.0,0.0,,,10238,duplicate row,duplicates
-2024-01-23 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000010303,1.0,pcs,0.0,,0.0,0.0,,camille,10303,duplicate row,duplicates
-2024-01-23 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000010340,1.0,pcs,0.0,,0.0,0.0,,camille,10340,duplicate row,duplicates
-2024-01-24 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000010519,1.0,pcs,0.0,,0.0,0.0,,camille,10519,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000010654,,<na>,,,0.0,0.0,,,10654,duplicate row,duplicates
-2024-01-24 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000010726,1.0,pcs,0.0,,0.0,0.0,,camille,10726,duplicate row,duplicates
-2024-01-25 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000010893,1.0,pcs,0.0,,0.0,0.0,,camille,10893,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000011141,,<na>,,,0.0,0.0,,,11141,duplicate row,duplicates
-2024-01-26 00:00:00,,,80722472,MEDICORE INHALER SPACER,1970-01-01 00:00:00.000011497,1.0,pcs,0.0,,185.0,375.0,,camille,11497,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000011584,,<na>,,,0.0,0.0,,,11584,duplicate row,duplicates
-2024-01-28 00:00:00,,,18666830,INSULIN SYRINGE COSMED,2031-05-25 00:00:00,4.0,pcs,0.0,,4.7,21.2,,camille,12092,duplicate row,duplicates
-2024-01-28 00:00:00,,,18666830,INSULIN SYRINGE COSMED,2031-05-25 00:00:00,4.0,pcs,0.0,,4.7,21.2,,camille,12105,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000012167,,<na>,,,0.0,0.0,,,12167,duplicate row,duplicates
-2024-01-28 00:00:00,,,4806502359914,FEMME INTERFOLDED PAPER TOWEL 1PLY,1970-01-01 00:00:00.000012171,1.0,pcs,0.0,,45.53,9.47,,camille,12171,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000012217,,<na>,,,0.0,0.0,,,12217,duplicate row,duplicates
-2024-01-29 00:00:00,,,4987176013491,VICKS INHALER TWIN PACK 0.5ML KEYCHAIN,2030-03-25 00:00:00,1.0,pcs,0.0,,83.8,12.2,,camille,12691,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000012830,,<na>,,,0.0,0.0,,,12830,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000012951,,<na>,,,0.0,0.0,,,12951,duplicate row,duplicates
-,,,,,1970-01-01 00:00:00.000013314,,<na>,,,0.0,0.0,,,13314,duplicate row,duplicates
-2024-01-31 00:00:00,,,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000013336,1.0,pcs,0.0,,15.16,3.34,,camille,13336,duplicate row,duplicates
-2024-01-31 00:00:00,,,4987176600776,VICKS VAPORUB 10G,2030-09-25 00:00:00,1.0,pcs,0.0,,53.86,10.39,,camille,13342,duplicate row,duplicates
-2024-01-31 00:00:00,,,480778853619,ALAXAN FR (IBUPROFEN + PARACETAMOL) CAP,2029-04-25 00:00:00,10.0,pcs,0.0,,8.0,5.0,,camille,13425,duplicate row,duplicates
-2024-01-31 00:00:00,,,SD,Sales Discount Variance,1970-01-01 00:00:00.000013461,1.0,pcs,0.0,,0.0,0.0,,camille,13461,duplicate row,duplicates
+,,,,,1970-01-01 00:00:00.000000099,,<na>,,,0.0,0.0,,,99,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,,,,,1970-01-01 00:00:00.000000329,,<na>,,,0.0,0.0,,,329,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,,,,,1970-01-01 00:00:00.000000385,,<na>,,,0.0,0.0,,,385,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,,,,,1970-01-01 00:00:00.000000774,,<na>,,,0.0,0.0,,,774,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,,,,,1970-01-01 00:00:00.000000922,,<na>,,,0.0,0.0,,,922,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+2024-01-03 00:00:00,35234.0,35235.0,G70141948,TOPCARE SPACER,2030-03-28 00:00:00,0.0,pcs,0.0,,0.0,0.0,0.00,camille,939,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000000942,,<na>,,,0.0,0.0,,,942,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+2024-01-03 00:00:00,35234.0,35235.0,G3805523855,FLOXANOVA-500 (LEVOFLOXACIN) 500MG FC TAB,1970-01-01 00:00:00.000001006,0.0,pcs,0.0,,0.0,0.0,,camille,1006,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000001007,,<na>,,,0.0,0.0,,,1007,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000001390,,<na>,,,0.0,0.0,,,1390,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,Account : PETRONILO V. MENDOZA JR,,1970-01-01 00:00:00.000001622,,<na>,,,,,,,1622,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000001890,,<na>,,,0.0,0.0,,,1890,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000002317,,<na>,,,0.0,0.0,,,2317,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,Account : GAIL PAOLO RIMANDO,,1970-01-01 00:00:00.000002471,,<na>,,,,,,,2471,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000002697,,<na>,,,0.0,0.0,,,2697,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000002864,,<na>,,,0.0,0.0,,,2864,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000003316,,<na>,,,0.0,0.0,,,3316,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,Account : JESSMEL RAMIREZ,,1970-01-01 00:00:00.000003330,,<na>,,,,,,,3330,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000003821,,<na>,,,0.0,0.0,,,3821,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000003849,,<na>,,,0.0,0.0,,,3849,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000004052,,<na>,,,0.0,0.0,,,4052,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000004198,,<na>,,,0.0,0.0,,,4198,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,Account : PETRONILO V. MENDOZA,,1970-01-01 00:00:00.000004455,,<na>,,,,,,,4455,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,Account : PETRONILO V. MENDOZA,,1970-01-01 00:00:00.000004464,,<na>,,,,,,,4464,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000004785,,<na>,,,0.0,0.0,,,4785,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000004799,,<na>,,,0.0,0.0,,,4799,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,Account : GAIL PAOLO RIMANDO,,1970-01-01 00:00:00.000005407,,<na>,,,,,,,5407,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000005448,,<na>,,,0.0,0.0,,,5448,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000006115,,<na>,,,0.0,0.0,,,6115,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000006223,,<na>,,,0.0,0.0,,,6223,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000006244,,<na>,,,0.0,0.0,,,6244,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000006383,,<na>,,,0.0,0.0,,,6383,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000006387,,<na>,,,0.0,0.0,,,6387,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000006698,,<na>,,,0.0,0.0,,,6698,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000006706,,<na>,,,0.0,0.0,,,6706,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+2024-01-15 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000006718,0.0,pcs,0.0,,0.0,0.0,,camille,6718,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000006719,,<na>,,,0.0,0.0,,,6719,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,Account : PETRONILO V. MENDOZA JR,,1970-01-01 00:00:00.000007355,,<na>,,,,,,,7355,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000007575,,<na>,,,0.0,0.0,,,7575,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,Account : PRINCESS LOU MARZO,,1970-01-01 00:00:00.000007708,,<na>,,,,,,,7708,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000008214,,<na>,,,0.0,0.0,,,8214,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+2024-01-20 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000008924,0.0,pcs,0.0,,0.0,0.0,,camille,8924,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000008925,,<na>,,,0.0,0.0,,,8925,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000008943,,<na>,,,0.0,0.0,,,8943,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,Account : GAIL PAOLO RIMANDO,,1970-01-01 00:00:00.000008999,,<na>,,,,,,,8999,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000009004,,<na>,,,0.0,0.0,,,9004,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000009336,,<na>,,,0.0,0.0,,,9336,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000009639,,<na>,,,0.0,0.0,,,9639,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000010210,,<na>,,,0.0,0.0,,,10210,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000010238,,<na>,,,0.0,0.0,,,10238,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000010654,,<na>,,,0.0,0.0,,,10654,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000011141,,<na>,,,0.0,0.0,,,11141,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000011584,,<na>,,,0.0,0.0,,,11584,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+2024-01-28 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000012166,0.0,pcs,0.0,,0.0,0.0,,camille,12166,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000012167,,<na>,,,0.0,0.0,,,12167,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000012217,,<na>,,,0.0,0.0,,,12217,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000012830,,<na>,,,0.0,0.0,,,12830,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000012951,,<na>,,,0.0,0.0,,,12951,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+,35234.0,35235.0,,,1970-01-01 00:00:00.000013314,,<na>,,,0.0,0.0,,,13314,"placeholder/non-item row (e.g., header like ""Account : ..."")",remove_incomplete_rows
+2024-01-02 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000000556,1.0,pcs,0.0,,0.0,0.0,,camille,556,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-04 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000001233,1.0,pcs,0.0,,0.0,0.0,,camille,1233,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-04 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000001244,1.0,pcs,0.0,,0.0,0.0,,camille,1244,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-04 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000001590,1.0,pcs,0.0,,0.0,0.0,,camille,1590,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-05 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000001968,1.0,pcs,0.0,,0.0,0.0,,camille,1968,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-07 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000002874,1.0,pcs,0.0,,0.0,0.0,,camille,2874,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-08 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000003147,1.0,pcs,0.0,,0.0,0.0,,camille,3147,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-08 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000003183,1.0,pcs,0.0,,0.0,0.0,,camille,3183,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-09 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000003592,1.0,pcs,0.0,,0.0,0.0,,camille,3592,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-09 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000003670,1.0,pcs,0.0,,0.0,0.0,,camille,3670,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-09 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000003721,1.0,pcs,0.0,,0.0,0.0,,camille,3721,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-09 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000003935,1.0,pcs,0.0,,0.0,0.0,,camille,3935,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-09 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000003944,1.0,pcs,0.0,,0.0,0.0,,camille,3944,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-10 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000004207,1.0,pcs,0.0,,0.0,0.0,,camille,4207,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-10 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000004573,1.0,pcs,0.0,,0.0,0.0,,camille,4573,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-11 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000004873,1.0,pcs,0.0,,0.0,0.0,,camille,4873,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-11 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000005025,1.0,pcs,0.0,,0.0,0.0,,camille,5025,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-12 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000005549,1.0,pcs,0.0,,0.0,0.0,,camille,5549,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-15 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000006458,1.0,pcs,0.0,,0.0,0.0,,camille,6458,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-15 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000006582,1.0,pcs,0.0,,0.0,0.0,,camille,6582,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-15 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000006729,1.0,pcs,0.0,,0.0,0.0,,camille,6729,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-16 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000006901,1.0,pcs,0.0,,0.0,0.0,,camille,6901,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-16 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000006983,1.0,pcs,0.0,,0.0,0.0,,camille,6983,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-16 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000007254,1.0,pcs,0.0,,0.0,0.0,,camille,7254,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-16 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000007337,1.0,pcs,0.0,,0.0,0.0,,camille,7337,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-20 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000009026,1.0,pcs,0.0,,0.0,0.0,,camille,9026,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-22 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000009422,1.0,pcs,0.0,,0.0,0.0,,camille,9422,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-22 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000009766,1.0,pcs,0.0,,0.0,0.0,,camille,9766,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-22 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000009800,1.0,pcs,0.0,,0.0,0.0,,camille,9800,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-22 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000009906,1.0,pcs,0.0,,0.0,0.0,,camille,9906,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-23 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000010036,1.0,pcs,0.0,,0.0,0.0,,camille,10036,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-23 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000010303,1.0,pcs,0.0,,0.0,0.0,,camille,10303,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-23 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000010340,1.0,pcs,0.0,,0.0,0.0,,camille,10340,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-24 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000010464,1.0,pcs,0.0,,0.0,0.0,,camille,10464,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-24 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000010519,1.0,pcs,0.0,,0.0,0.0,,camille,10519,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-24 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000010726,1.0,pcs,0.0,,0.0,0.0,,camille,10726,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-25 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000010883,1.0,pcs,0.0,,0.0,0.0,,camille,10883,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-25 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000010893,1.0,pcs,0.0,,0.0,0.0,,camille,10893,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-27 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000012030,1.0,pcs,0.0,,0.0,0.0,,camille,12030,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-28 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000012188,1.0,pcs,0.0,,0.0,0.0,,camille,12188,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-29 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000012426,1.0,pcs,0.0,,0.0,0.0,,camille,12426,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-31 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000013226,1.0,pcs,0.0,,0.0,0.0,,camille,13226,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-31 00:00:00,35234.0,35235.0,SD,Sales Discount Variance,1970-01-01 00:00:00.000013461,1.0,pcs,0.0,,0.0,0.0,,camille,13461,"non-item adjustment (e.g., Sales Discount/VOID/rounding)",remove_incomplete_rows
+2024-01-02 00:00:00,35234.0,35235.0,4807788561275,NASOCLEAR (SODIUM CHLORIDE0 0.65% SALINE SOLUTION,2030-03-25 00:00:00,1.0,pcs,0.0,,83.01,8.49,,camille,346,duplicate row,duplicates
+2024-01-02 00:00:00,35234.0,35235.0,4807788561275,NASOCLEAR (SODIUM CHLORIDE0 0.65% SALINE SOLUTION,2030-05-25 00:00:00,1.0,pcs,0.0,,83.01,8.49,,camille,421,duplicate row,duplicates
+2024-01-02 00:00:00,35234.0,35235.0,4800046000844,VIVALYTE PLUS APPLE 4.8G SACHET,2030-05-25 00:00:00,5.0,pcs,0.0,,13.87,9.4,,camille,444,duplicate row,duplicates
+2024-01-02 00:00:00,35234.0,35235.0,4801981126866,WILKINS PURE 330ML,1970-01-01 00:00:00.000000493,1.0,pcs,0.0,,7.2,3.8,,camille,493,duplicate row,duplicates
+2024-01-02 00:00:00,35234.0,35235.0,79206034723,MICROPORE 1/2 INCH,2001-05-26 00:00:00,1.0,pcs,0.0,,17.5,7.5,,camille,603,duplicate row,duplicates
+2024-01-02 00:00:00,35234.0,35235.0,4801981126866,WILKINS PURE 330ML,1970-01-01 00:00:00.000000669,1.0,pcs,0.0,,7.2,3.8,,camille,669,duplicate row,duplicates
+2024-01-03 00:00:00,35234.0,35235.0,4806506740022,ORAHEX REGULAR 120ML,2001-08-25 00:00:00,1.0,pcs,0.0,,109.33,21.92,,camille,989,duplicate row,duplicates
+2024-01-04 00:00:00,35234.0,35235.0,4807788519849,ALNIX 2.5MG DROP 10ML,2030-04-25 00:00:00,1.0,pcs,0.0,,186.46,16.54,,camille,1407,duplicate row,duplicates
+2024-01-05 00:00:00,35234.0,35235.0,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000001709,1.0,pcs,0.0,,15.16,3.34,,camille,1709,duplicate row,duplicates
+2024-01-05 00:00:00,35234.0,35235.0,4806532560199,NEOPRED 20MG/5ML 60ML SYRUP,2028-02-25 00:00:00,1.0,pcs,0.0,,271.7,41.3,,camille,1902,duplicate row,duplicates
+2024-01-05 00:00:00,35234.0,35235.0,4806532560199,NEOPRED 20MG/5ML 60ML SYRUP,2028-02-25 00:00:00,1.0,pcs,0.0,,271.7,41.3,,camille,1917,duplicate row,duplicates
+2024-01-05 00:00:00,35234.0,35235.0,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000002056,1.0,pcs,0.0,,15.16,3.34,,camille,2056,duplicate row,duplicates
+2024-01-05 00:00:00,35234.0,35235.0,4800131592759,BIOGENIC (ISOPROPYL ALCOHOL) 70% 50ML SPRAY,2001-11-25 00:00:00,1.0,pcs,0.0,,25.46,8.29,,camille,2071,duplicate row,duplicates
+2024-01-05 00:00:00,35234.0,35235.0,4807788561688,BIOGESIC (PARACETAMOL) 500MG TAB,2001-02-27 00:00:00,10.0,pcs,0.0,,4.05,2.0,,camille,2129,duplicate row,duplicates
+2024-01-06 00:00:00,35234.0,35235.0,4800135005903,PH CARE FLORAL CLEAN 50ML,2030-06-28 00:00:00,1.0,pcs,0.0,,46.73,9.27,,camille,2559,duplicate row,duplicates
+2024-01-06 00:00:00,35234.0,35235.0,8851198038526,STREPSILS LOZ ORANGE 8s,2030-08-26 00:00:00,1.0,pcs,0.0,,64.0,6.5,,camille,2562,duplicate row,duplicates
+2024-01-06 00:00:00,35234.0,35235.0,4987176013491,VICKS INHALER KEY CHAIN,2001-06-24 00:00:00,1.0,pcs,0.0,,83.8,12.2,,camille,2646,duplicate row,duplicates
+2024-01-06 00:00:00,35234.0,35235.0,4807788526762,BIOFLU (PENYLEPHINE + CHLORPHENAMINE + PARACETAMOL) TAB,2025-01-24 00:00:00,3.0,pcs,0.0,,7.61,2.67,,camille,2677,duplicate row,duplicates
+2024-01-08 00:00:00,35234.0,35235.0,4801981126866,WILKINS PURE 330ML,1970-01-01 00:00:00.000003311,1.0,pcs,0.0,,7.2,3.8,,camille,3311,duplicate row,duplicates
+2024-01-08 00:00:00,35234.0,35235.0,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000003373,1.0,pcs,0.0,,15.16,3.34,,camille,3373,duplicate row,duplicates
+2024-01-08 00:00:00,35234.0,35235.0,4806504260638,APPEVIT 60ML SYRUP,2030-08-24 00:00:00,1.0,pcs,0.0,,175.0,17.5,,camille,3400,duplicate row,duplicates
+2024-01-08 00:00:00,35234.0,35235.0,4806501283142,WHITE FLOWER C#4 2.5ML,2001-04-27 00:00:00,1.0,pcs,0.0,,45.7,8.2,,camille,3447,duplicate row,duplicates
+2024-01-09 00:00:00,35234.0,35235.0,8851198028527,STREPSILS HONEY LEMON (DICHLOROBENZYL ALCOHOL + AMYLMETACRESOL + ASCORBIC ACID) 8,2014-03-25 00:00:00,1.0,pcs,0.0,,63.99,6.51,,camille,3675,duplicate row,duplicates
+2024-01-09 00:00:00,35234.0,35235.0,4806037101873,ACETYPHIL (ACETYLCYSTEINE) 600MG SACHET,1970-01-01 00:00:00.000003794,6.0,pcs,0.2,,11.0,14.16,,camille,3794,duplicate row,duplicates
+2024-01-10 00:00:00,35234.0,35235.0,8904186000521,TRIMEBET (TRIMETAZIDINE) 35G TAB,2001-05-24 00:00:00,10.0,pcs,0.2,,1.78,58.2,,camille,4156,duplicate row,duplicates
+2024-01-10 00:00:00,35234.0,35235.0,8996001600269,LE MINERALE 600ML,2030-01-25 00:00:00,1.0,pcs,0.0,,9.2,5.8,,camille,4483,duplicate row,duplicates
+2024-01-10 00:00:00,35234.0,35235.0,79206034723,MICROPORE 1/2 INCH,2001-05-26 00:00:00,1.0,pcs,0.0,,17.5,7.5,,camille,4579,duplicate row,duplicates
+2024-01-11 00:00:00,35234.0,35235.0,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000004734,1.0,pcs,0.0,,15.16,3.34,,camille,4734,duplicate row,duplicates
+2024-01-11 00:00:00,35234.0,35235.0,4801981107971,WILKINS PURE 500ML,2030-05-24 00:00:00,1.0,pcs,0.0,,9.38,8.63,,camille,4973,duplicate row,duplicates
+2024-01-11 00:00:00,35234.0,35235.0,4801981107971,WILKINS PURE 500ML,2030-05-24 00:00:00,1.0,pcs,0.0,,9.38,8.63,,camille,4993,duplicate row,duplicates
+2024-01-11 00:00:00,35234.0,35235.0,48032742,JOHNSONS WHITE BABY POWDER 25G,2030-05-26 00:00:00,1.0,pcs,0.0,,12.45,2.55,,camille,5070,duplicate row,duplicates
+2024-01-12 00:00:00,35234.0,35235.0,8851198028527,STREPSILS LOZ HONEY LEMON 8s,2030-08-26 00:00:00,1.0,pcs,0.0,,63.99,6.51,,camille,5338,duplicate row,duplicates
+2024-01-12 00:00:00,35234.0,35235.0,4806502352588,FEMME FACIAL TISSUE UNSCENTED,1970-01-01 00:00:00.000005465,1.0,pcs,0.0,,26.75,2.75,,camille,5465,duplicate row,duplicates
+2024-01-12 00:00:00,35234.0,35235.0,8902269016674,ALCLAV 625MG TAB,1970-01-01 00:00:00.000005504,6.0,pcs,0.0,,7.84,84.96,,camille,5504,duplicate row,duplicates
+2024-01-13 00:00:00,35234.0,35235.0,4800011000039,MAMA&#039;S LOVE COTTON BUDS 200 TIPS,1970-01-01 00:00:00.000005829,1.0,pcs,0.0,,15.77,6.13,,camille,5829,duplicate row,duplicates
+2024-01-13 00:00:00,35234.0,35235.0,9314057002629,DIFFLAM LOZENGES 3MG LOZ,2030-11-24 00:00:00,6.0,pcs,0.0,,29.21,36.24,,camille,5855,duplicate row,duplicates
+2024-01-13 00:00:00,35234.0,35235.0,4806512120184,CANDIVA 10MG/G (1%W/W) CREAM,1970-01-01 00:00:00.000005960,1.0,pcs,0.0,,155.25,31.25,,camille,5960,duplicate row,duplicates
+2024-01-15 00:00:00,35234.0,35235.0,4987176600769,VICKS VAPORUB 5G,2030-08-25 00:00:00,1.0,pcs,0.0,,30.39,6.11,,camille,6434,duplicate row,duplicates
+2024-01-15 00:00:00,35234.0,35235.0,4806502163931,SANICARE CLEANSING WIPES - LAVENDER 80 SHEETS,2030-06-24 00:00:00,1.0,pcs,0.0,,106.55,1.45,,camille,6744,duplicate row,duplicates
+2024-01-16 00:00:00,35234.0,35235.0,4807788561688,BIOGESIC 500MG TAB,2030-07-27 00:00:00,20.0,pcs,0.0,,4.05,4.0,,camille,7001,duplicate row,duplicates
+2024-01-16 00:00:00,35234.0,35235.0,4806532560199,NEOPRED 20MG/5ML 60ML SYRUP,2030-10-26 00:00:00,1.0,pcs,0.0,,260.0,53.0,,camille,7080,duplicate row,duplicates
+2024-01-16 00:00:00,35234.0,35235.0,61132716035,SURGICAL OR CAP,1970-01-01 00:00:00.000007117,1.0,pcs,0.0,,1.0,1.1,,camille,7117,duplicate row,duplicates
+2024-01-16 00:00:00,35234.0,35235.0,4806524149203,SURE-GUARD LATEX SURGICAL GLOVES 8.0 PAIR,1970-01-01 00:00:00.000007123,1.0,pcs,0.0,,15.6,16.4,,camille,7123,duplicate row,duplicates
+2024-01-16 00:00:00,35234.0,35235.0,61132716035,SURGICAL OR CAP,1970-01-01 00:00:00.000007154,1.0,pcs,0.0,,1.0,1.1,,camille,7154,duplicate row,duplicates
+2024-01-16 00:00:00,35234.0,35235.0,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000007360,1.0,pcs,0.0,,15.16,3.34,,camille,7360,duplicate row,duplicates
+2024-01-16 00:00:00,35234.0,35235.0,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000007394,1.0,pcs,0.0,,15.16,3.34,,camille,7394,duplicate row,duplicates
+2024-01-17 00:00:00,35234.0,35235.0,50808076,"TOPCARE TONGUE DEPRESSOR 6"" STERILE",2004-01-27 00:00:00,10.0,pcs,0.0,,1.1,19.0,,camille,7437,duplicate row,duplicates
+2024-01-17 00:00:00,35234.0,35235.0,74329007,KING MED DISPOSABLE SYRINGE 10CC,1970-01-01 00:00:00.000007438,5.0,pcs,0.0,,3.5,22.5,,camille,7438,duplicate row,duplicates
+2024-01-17 00:00:00,35234.0,35235.0,4807788561688,BIOGESIC 500MG TAB,2001-10-25 00:00:00,10.0,pcs,0.0,,4.05,2.0,,camille,7447,duplicate row,duplicates
+2024-01-18 00:00:00,35234.0,35235.0,4806532560199,NEOPRED 20MG/5ML 60ML SYRUP,2031-01-24 00:00:00,1.0,pcs,0.0,,260.0,53.0,,camille,8053,duplicate row,duplicates
+2024-01-19 00:00:00,35234.0,35235.0,4800348114515,BREZU (PROCATEROL) 5MCG/ML 60ML SYR,2021-03-25 00:00:00,2.0,pcs,0.0,,193.64,82.72,,camille,8567,duplicate row,duplicates
+2024-01-20 00:00:00,35234.0,35235.0,4800350107024,MEPTIN (PROCATEROL HYDROCHLORIDE) 25MG TAB,1970-01-01 00:00:00.000009054,14.0,pcs,0.0,,12.81,23.66,,camille,9054,duplicate row,duplicates
+2024-01-20 00:00:00,35234.0,35235.0,4800011000039,MAMA&#039;S LOVE COTTON BUDS 200 TIPS,1970-01-01 00:00:00.000009064,1.0,pcs,0.0,,15.77,6.13,,camille,9064,duplicate row,duplicates
+2024-01-22 00:00:00,35234.0,35235.0,4807788561688,BIOGESIC 500MG TAB,2001-10-25 00:00:00,10.0,pcs,0.0,,4.05,2.0,,camille,9550,duplicate row,duplicates
+2024-01-22 00:00:00,35234.0,35235.0,4800348114515,BREZU (PROCATEROL) 5MCG/ML 60ML SYR,2030-08-26 00:00:00,1.0,pcs,0.0,,193.64,41.36,,camille,9715,duplicate row,duplicates
+2024-01-22 00:00:00,35234.0,35235.0,8904186000521,TRIMEBET (TRIMETAZIDINE) 35MG TAB,2001-08-24 00:00:00,10.0,pcs,0.2,,1.78,58.2,,camille,9762,duplicate row,duplicates
+2024-01-22 00:00:00,35234.0,35235.0,4807788561688,BIOGESIC 500MG TAB,2030-07-27 00:00:00,10.0,pcs,0.0,,4.05,2.0,,camille,9881,duplicate row,duplicates
+2024-01-23 00:00:00,35234.0,35235.0,90934341121,ISOLATION GOWN,1970-01-01 00:00:00.000010219,2.0,pcs,0.0,,120.0,260.0,,camille,10219,duplicate row,duplicates
+2024-01-26 00:00:00,35234.0,35235.0,80722472,MEDICORE INHALER SPACER,1970-01-01 00:00:00.000011497,1.0,pcs,0.0,,185.0,375.0,,camille,11497,duplicate row,duplicates
+2024-01-28 00:00:00,35234.0,35235.0,18666830,INSULIN SYRINGE COSMED,2031-05-25 00:00:00,4.0,pcs,0.0,,4.7,21.2,,camille,12092,duplicate row,duplicates
+2024-01-28 00:00:00,35234.0,35235.0,18666830,INSULIN SYRINGE COSMED,2031-05-25 00:00:00,4.0,pcs,0.0,,4.7,21.2,,camille,12105,duplicate row,duplicates
+2024-01-28 00:00:00,35234.0,35235.0,4806502359914,FEMME INTERFOLDED PAPER TOWEL 1PLY,1970-01-01 00:00:00.000012171,1.0,pcs,0.0,,45.53,9.47,,camille,12171,duplicate row,duplicates
+2024-01-29 00:00:00,35234.0,35235.0,4987176013491,VICKS INHALER TWIN PACK 0.5ML KEYCHAIN,2030-03-25 00:00:00,1.0,pcs,0.0,,83.8,12.2,,camille,12691,duplicate row,duplicates
+2024-01-31 00:00:00,35234.0,35235.0,4806502351901,SANICARE BATHROOM TISSUE 1s,1970-01-01 00:00:00.000013336,1.0,pcs,0.0,,15.16,3.34,,camille,13336,duplicate row,duplicates
+2024-01-31 00:00:00,35234.0,35235.0,4987176600776,VICKS VAPORUB 10G,2030-09-25 00:00:00,1.0,pcs,0.0,,53.86,10.39,,camille,13342,duplicate row,duplicates
+2024-01-31 00:00:00,35234.0,35235.0,480778853619,ALAXAN FR (IBUPROFEN + PARACETAMOL) CAP,2029-04-25 00:00:00,10.0,pcs,0.0,,8.0,5.0,,camille,13425,duplicate row,duplicates
