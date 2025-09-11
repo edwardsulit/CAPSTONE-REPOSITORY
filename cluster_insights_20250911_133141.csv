@@ -1,0 +1,7 @@
+cluster,cluster_insight
+0,"Low Qty, Low Sales, Low Cost, Low Profit, Low Discount"
+1,"Low Qty, Low Sales, Low Cost, Low Profit, Low Discount"
+2,"Low Qty, High Sales, High Cost, High Profit, Low Discount"
+3,"Low Qty, Low Sales, Low Cost, Low Profit, High Discount"
+4,"Low Qty, Low Sales, Low Cost, Low Profit, Avg Discount"
+5,"High Qty, Low Sales, Low Cost, Low Profit, Avg Discount"

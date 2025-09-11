@@ -80,7 +80,7 @@ def _load_csv_from_source(source: str) -> pd.DataFrame:
             txt = r.content.decode("latin-1")
         return pd.read_csv(StringIO(txt))
     else:
-        print(f"📄 Reading CSV from file: {source}")
+        print(f"\n📄 Reading CSV from file: {source}")
         # Try utf-8, fallback latin-1 for Windows exports
         try:
             return pd.read_csv(source, encoding="utf-8")
@@ -147,7 +147,7 @@ class Command(BaseCommand):
         Xs = scaler.fit_transform(feat_df.values)
         print("🔎 Selecting number of clusters (k) using silhouette score…")
         best_k, model, scores = _auto_kmeans(Xs)
-        print(f"✔ Best k: {best_k}")
+        print(f"\n✔ Best k: {best_k}")
         print(f"ℹ️  Silhouette scores: {json.dumps(scores, indent=2)}")
 
         labels = model.labels_
@@ -164,23 +164,62 @@ class Command(BaseCommand):
             .sort_values("cluster")
         )
 
-        # 7) Save outputs next to manage.py (cwd)
-        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        out_name = f"clustered_{ts}.csv"
-        sum_name = f"cluster_summary_{ts}.csv"
-        out.to_csv(out_name, index=False)
-        summary.to_csv(sum_name, index=False)
+        # 7) Build human-readable insights per cluster
+        insights = []
+        # Choose key business-facing columns if present in summary; otherwise fallback to top numeric cols used
+        preferred = [c for c in ["Qty", "Sales", "Cost", "Profit", "Discount"] if c in summary.columns]
+        key_cols = preferred if preferred else list(summary.columns[1:])  # exclude 'cluster'
 
-        # 8) Print short report
+        # Global means across clusters for relative thresholds
+        global_means = {c: summary[c].mean() for c in key_cols}
+
+        for _, row in summary.iterrows():
+            cid = int(row["cluster"])
+            parts = []
+            for col in key_cols:
+                val = row[col]
+                if pd.isna(val):
+                    continue
+                gm = global_means.get(col, None)
+                if gm is None or gm == 0 or pd.isna(gm):
+                    parts.append(f"Avg {col}")
+                    continue
+                if val > gm * 1.2:
+                    parts.append(f"High {col}")
+                elif val < gm * 0.8:
+                    parts.append(f"Low {col}")
+                else:
+                    parts.append(f"Avg {col}")
+            insight_text = ", ".join(parts) if parts else "No major differences"
+            insights.append({"cluster": cid, "cluster_insight": insight_text})
+
+        insights_df = pd.DataFrame(insights).sort_values("cluster").reset_index(drop=True)
+
+        # 8) Join insights back to each row in the clustered dataset
+        insight_map = dict(zip(insights_df["cluster"], insights_df["cluster_insight"]))
+        out["cluster_insight"] = out["cluster"].map(insight_map)
+
+        # 9) Save outputs next to manage.py (cwd)
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        clustered_name = f"clustered_{ts}.csv"
+        summary_name = f"cluster_summary_{ts}.csv"
+        insights_name = f"cluster_insights_{ts}.csv"
+
+        out.to_csv(clustered_name, index=False)
+        summary.to_csv(summary_name, index=False)
+        insights_df.to_csv(insights_name, index=False)
+
+        # 10) Print short report
         counts = out["cluster"].value_counts().sort_index()
         print("\n====== CLUSTERING REPORT ======")
         print(f"Chosen k: {best_k}")
         print("Counts per cluster:")
         for c, n in counts.items():
             print(f"  - cluster {c}: {n}")
-        print("\nFeature columns used:")
-        print(", ".join(feat_df.columns))
+
         print("\nOutputs saved:")
-        print(f"  - Labeled data: {os.path.abspath(out_name)}")
-        print(f"  - Cluster summary: {os.path.abspath(sum_name)}")
+        print(f"  - Labeled data (+ insights): {os.path.abspath(clustered_name)}")
+        print(f"  - Cluster summary:           {os.path.abspath(summary_name)}")
+        print(f"  - Cluster insights:          {os.path.abspath(insights_name)}")
+
         print("\n✅ Done.")
