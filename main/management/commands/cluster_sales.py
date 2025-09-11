@@ -1,231 +1,186 @@
 import io
 import os
-import sys
 import json
-import time
-import textwrap
-import traceback
 from datetime import datetime
+from io import StringIO
 
 import pandas as pd
 from django.core.management.base import BaseCommand, CommandError
 
-# Optional imports guarded so the command still loads if not present.
+# === scikit-learn bits ===
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score
+
+# ---------- PROMPT HELPERS ----------
 try:
-    from sklearn.cluster import KMeans
-    from sklearn.preprocessing import StandardScaler
-    from sklearn.metrics import silhouette_score
-except Exception as e:
-    KMeans = None
-    StandardScaler = None
-    silhouette_score = None
+    import tkinter as tk
+    from tkinter import filedialog
+    TK_AVAILABLE = True
+except Exception:
+    TK_AVAILABLE = False
 
-def safe_print(msg: str):
+def browse_for_file() -> str | None:
+    if not TK_AVAILABLE:
+        print("Browse not available on this environment.")
+        return None
     try:
-        print(msg)
+        root = tk.Tk()
+        root.withdraw()
+        root.attributes("-topmost", True)
+        fp = filedialog.askopenfilename(
+            title="Select CSV Data File",
+            filetypes=[("CSV files", "*.csv"), ("All files", "*.*")],
+            initialdir=os.getcwd(),
+        )
+        root.destroy()
+        return fp if fp else None
     except Exception:
-        # Fallback for odd terminals
-        sys.stdout.write((msg or "") + "\n")
-        sys.stdout.flush()
+        return None
 
-def read_csv_interactive() -> pd.DataFrame:
-    """
-    Interactive CSV loader with retry if no source is provided.
-    """
-    safe_print("")
-    safe_print("Data Cleaning Program")
-    safe_print("==================================================")
-    safe_print("1. Browse for local CSV file")
-    safe_print("2. Enter file path manually")
-    safe_print("3. Enter URL to CSV file")
-
+def get_data_source() -> str | None:
+    print("Data Clustering")
+    print("=" * 50)
+    print("1. Browse for local CSV file")
+    print("2. Enter file path manually")
+    print("3. Enter URL to CSV file")
     while True:
         choice = input("Choose option (1/2/3) or press Enter to browse: ").strip()
-
-        # Default: same as browse (option 1)
-        if choice == "" or choice == "1":
-            try:
-                import tkinter as tk
-                from tkinter import filedialog
-
-                root = tk.Tk()
-                root.withdraw()
-                root.update()
-                file_path = filedialog.askopenfilename(
-                    title="Select cleaned CSV",
-                    filetypes=[("CSV files", "*.csv"), ("All files", "*.*")]
-                )
-                root.destroy()
-
-                if file_path:
-                    safe_print(f"✔ Selected file: {file_path}")
-                    return pd.read_csv(file_path)
-                else:
-                    safe_print("No file selected.")
-            except Exception:
-                safe_print("⚠️  Browse dialog not available.")
-                # fall through to retry below
-
+        if not choice or choice == "1":
+            src = browse_for_file()
+            if src:
+                return src
+            retry = input("No file selected. Try another method? (y/n): ").strip().lower()
+            if retry != "y":
+                return None
         elif choice == "2":
-            manual = input("Enter full path to CSV: ").strip().strip('"').strip("'")
-            if manual and os.path.exists(manual):
-                safe_print(f"✔ Using: {manual}")
-                return pd.read_csv(manual)
-            else:
-                safe_print("Invalid or missing path.")
-
+            src = input("Enter file path: ").strip()
+            if src and os.path.exists(src):
+                return src
+            print("File not found.")
         elif choice == "3":
-            url = input("Paste CSV URL: ").strip()
-            if url:
-                try:
-                    import requests
-                    safe_print("⬇️  Downloading CSV...")
-                    r = requests.get(url, timeout=60)
-                    r.raise_for_status()
-                    try:
-                        text = r.content.decode("utf-8")
-                    except UnicodeDecodeError:
-                        text = r.content.decode("latin-1")
-                    safe_print("✔ Downloaded CSV from URL.")
-                    return pd.read_csv(io.StringIO(text))
-                except Exception as e:
-                    safe_print(f"Failed to fetch CSV: {e}")
-            else:
-                safe_print("No URL provided.")
+            src = input("Enter URL: ").strip()
+            if src.startswith(("http://", "https://")):
+                return src
+            print("Please enter a valid URL.")
+        else:
+            print("Invalid choice. Please enter 1, 2, or 3.")
 
-        # Ask if they want to retry
-        retry = input("No source provided. Try another method? (y/n): ").strip().lower()
-        if retry != "y":
-            safe_print("No source provided. Exiting.")
-            raise CommandError("No source provided.")
+def _load_csv_from_source(source: str) -> pd.DataFrame:
+    """Load CSV into a DataFrame from a path or URL (keeps your prompt’s logic)."""
+    if source.startswith(("http://", "https://")):
+        import requests  # lazy import
+        print(f"⬇️  Fetching CSV from URL: {source}")
+        r = requests.get(source, timeout=60)
+        r.raise_for_status()
+        # try utf-8 then latin-1 (same approach you use elsewhere)
+        try:
+            txt = r.content.decode("utf-8")
+        except UnicodeDecodeError:
+            txt = r.content.decode("latin-1")
+        return pd.read_csv(StringIO(txt))
+    else:
+        print(f"📄 Reading CSV from file: {source}")
+        # Try utf-8, fallback latin-1 for Windows exports
+        try:
+            return pd.read_csv(source, encoding="utf-8")
+        except UnicodeDecodeError:
+            return pd.read_csv(source, encoding="latin-1")
 
-def auto_kmeans_with_silhouette(X_scaled, k_min=2, k_max=8, n_init=10, random_state=42):
-    """
-    Try k in [k_min, k_max], pick the one with the best silhouette score.
-    Returns (best_k, best_model, scores_dict).
-    """
-    best_k = None
-    best_score = -1.0
-    best_model = None
+
+# ---------- CLUSTERING HELPERS ----------
+def _choose_numeric_features(df: pd.DataFrame) -> pd.DataFrame:
+    num = df.select_dtypes(include=["number"]).copy()
+    # drop all-null or constant columns
+    drop = []
+    for c in num.columns:
+        s = num[c]
+        if s.isna().all() or s.dropna().nunique() <= 1:
+            drop.append(c)
+    if drop:
+        num = num.drop(columns=drop, errors="ignore")
+    if num.shape[1] == 0:
+        raise CommandError("No suitable numeric columns to cluster on.")
+    return num
+
+def _auto_kmeans(X_scaled, k_min=2, k_max=8, n_init=10, random_state=42):
+    best_k, best_score, best_model = None, -1.0, None
     scores = {}
-
     for k in range(k_min, k_max + 1):
-        model = KMeans(n_clusters=k, n_init=n_init, random_state=random_state)
-        labels = model.fit_predict(X_scaled)
-        # Silhouette requires > 1 label and < n_samples unique labels
+        m = KMeans(n_clusters=k, n_init=n_init, random_state=random_state)
+        labels = m.fit_predict(X_scaled)
         if len(set(labels)) <= 1 or len(set(labels)) >= len(labels):
             scores[k] = float("nan")
             continue
-        score = silhouette_score(X_scaled, labels)
-        scores[k] = float(score)
-        if score > best_score:
-            best_k = k
-            best_score = score
-            best_model = model
-
+        sc = silhouette_score(X_scaled, labels)
+        scores[k] = float(sc)
+        if sc > best_score:
+            best_k, best_score, best_model = k, sc, m
     if best_model is None:
-        # Fallback to k=3
-        safe_print("⚠️  Could not compute silhouette reliably; defaulting to k=3.")
-        best_model = KMeans(n_clusters=3, n_init=n_init, random_state=42).fit(X_scaled)
+        print("⚠️  Silhouette selection failed; defaulting to k=3.")
         best_k = 3
+        best_model = KMeans(n_clusters=3, n_init=n_init, random_state=random_state).fit(X_scaled)
         scores[3] = float("nan")
-
     return best_k, best_model, scores
 
+
+# ---------- DJANGO MANAGEMENT COMMAND ----------
 class Command(BaseCommand):
-    help = "Interactively load a cleaned CSV (browse/path/URL), run K-Means clustering (descriptive analytics), and save labeled output."
+    help = "Load a cleaned CSV via the same prompt flow as CLEAN_merged.py, run K-Means clustering, and save outputs."
 
     def handle(self, *args, **options):
-        # Dependency checks
-        if KMeans is None or StandardScaler is None or silhouette_score is None:
-            raise CommandError(
-                "scikit-learn is required. Install with:\n  pip install scikit-learn"
-            )
+        # 1) Ask for CSV source using your exact prompt flow
+        src = get_data_source()   # identical UX to your cleaner  :contentReference[oaicite:2]{index=2}
+        if not src:
+            raise CommandError("No source provided. Exiting.")
 
-        try:
-            df = read_csv_interactive()
-        except Exception as e:
-            raise CommandError(str(e))
-
+        # 2) Load CSV
+        df = _load_csv_from_source(src)
         if df.empty:
             raise CommandError("The CSV appears to be empty.")
 
-        # Keep an id/key column if present, to reattach later (optional)
-        possible_keys = ["id", "receipt", "so", "item_code"]
-        id_cols = [c for c in possible_keys if c in df.columns]
+        # 3) Select features (all numeric)
+        feat_df = _choose_numeric_features(df).fillna(0)
 
-        # 1) Select numeric features
-        try:
-            feat_df = choose_features(df)
-        except Exception as e:
-            raise CommandError(str(e))
-
-        # 2) Fill NAs with 0 (simple descriptive analytics assumption)
-        feat_df_filled = feat_df.fillna(0)
-
-        # 3) Scale
+        # 4) Scale + pick k with silhouette
         scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(feat_df_filled.values)
+        Xs = scaler.fit_transform(feat_df.values)
+        print("🔎 Selecting number of clusters (k) using silhouette score…")
+        best_k, model, scores = _auto_kmeans(Xs)
+        print(f"✔ Best k: {best_k}")
+        print(f"ℹ️  Silhouette scores: {json.dumps(scores, indent=2)}")
 
-        # 4) Auto-pick k using silhouette
-        safe_print("🔎 Selecting number of clusters (k) using silhouette score...")
-        best_k, best_model, scores = auto_kmeans_with_silhouette(X_scaled)
-        safe_print(f"✔ Best k: {best_k}")
-        safe_print(f"ℹ️  Silhouette scores: {json.dumps(scores, indent=2)}")
+        labels = model.labels_
 
-        labels = best_model.labels_
+        # 5) Attach labels to original data
+        out = df.copy()
+        out["cluster"] = labels
 
-        # 5) Attach cluster labels to original df
-        out_df = df.copy()
-        out_df["cluster"] = labels
-
-        # 6) Produce quick per-cluster summary (means of numeric columns)
+        # 6) Per-cluster summary (means of numeric cols)
         summary = (
-            out_df.groupby("cluster")[feat_df.columns]
+            out.groupby("cluster")[feat_df.columns]
             .mean(numeric_only=True)
             .reset_index()
             .sort_values("cluster")
         )
 
-        counts = out_df["cluster"].value_counts().sort_index()
-
-        # 7) Save outputs
+        # 7) Save outputs next to manage.py (cwd)
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         out_name = f"clustered_{ts}.csv"
-        summary_name = f"cluster_summary_{ts}.csv"
+        sum_name = f"cluster_summary_{ts}.csv"
+        out.to_csv(out_name, index=False)
+        summary.to_csv(sum_name, index=False)
 
-        out_df.to_csv(out_name, index=False)
-        summary.to_csv(summary_name, index=False)
-
-        # 8) Print a readable report
-        safe_print("")
-        safe_print("====== CLUSTERING REPORT ======")
-        safe_print(f"Chosen k: {best_k}")
-        safe_print("Counts per cluster:")
-        for cl, cnt in counts.items():
-            safe_print(f"  - cluster {cl}: {cnt}")
-
-        safe_print("\nCluster-wise feature means (first few columns):")
-        # Show up to 8 columns in terminal for readability
-        cols_to_show = list(summary.columns[: min(9, len(summary.columns))])
-        safe_print(summary[cols_to_show].to_string(index=False))
-
-        safe_print("\nFeature columns used:")
-        safe_print(", ".join(feat_df.columns))
-
-        safe_print("\nSilhouette score table:")
-        for k in sorted(scores.keys()):
-            safe_print(f"  k={k}: {scores[k]}")
-
-        safe_print("\nOutputs saved:")
-        safe_print(f"  - Labeled data: {os.path.abspath(out_name)}")
-        safe_print(f"  - Cluster summary: {os.path.abspath(summary_name)}")
-
-        # Optional tip if they want to keep specific columns
-        if id_cols:
-            safe_print(
-                "\nTip: You had potential ID columns detected "
-                f"({', '.join(id_cols)}). They are included in the labeled output for traceability."
-            )
-
-        safe_print("\n✅ Done.")
+        # 8) Print short report
+        counts = out["cluster"].value_counts().sort_index()
+        print("\n====== CLUSTERING REPORT ======")
+        print(f"Chosen k: {best_k}")
+        print("Counts per cluster:")
+        for c, n in counts.items():
+            print(f"  - cluster {c}: {n}")
+        print("\nFeature columns used:")
+        print(", ".join(feat_df.columns))
+        print("\nOutputs saved:")
+        print(f"  - Labeled data: {os.path.abspath(out_name)}")
+        print(f"  - Cluster summary: {os.path.abspath(sum_name)}")
+        print("\n✅ Done.")
