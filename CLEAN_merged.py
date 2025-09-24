@@ -8,6 +8,46 @@ import sys
 import tkinter as tk
 from tkinter import filedialog
 from datetime import datetime
+from post_clean_loader import run_full_load
+
+# put this near the top of CLEAN_merged.py
+REQUIRED_HEADER = [
+    "Date","Receipt","SO","Item Code","Description",
+    "Qty","Discount","Sales","Cost","Profit","Payment","Cashier ID"
+]
+
+def _norm_col(c: str) -> str:
+    # normalize: strip, collapse spaces, remove BOMs, lowercase compare
+    return (
+        str(c)
+        .replace("\ufeff", "")
+        .strip()
+        .replace("\xa0", " ")
+        .replace("  ", " ")
+    )
+
+def analyze_csv_structure_strict(csv_content: str) -> int:
+    """
+    Find the line whose comma-separated values match REQUIRED_HEADER exactly
+    (order and names must match after normalization). If none is found, raise.
+    """
+    lines = csv_content.splitlines()
+    target = [_norm_col(x) for x in REQUIRED_HEADER]
+
+    for i, line in enumerate(lines):
+        if line.count(",") < (len(REQUIRED_HEADER)-1):
+            continue
+        cols = [_norm_col(x) for x in line.split(",")]
+        if cols == target:
+            # exact match
+            return i
+
+    raise ValueError(
+        "Header not found. The file must contain this exact header line:\n"
+        + ",".join(REQUIRED_HEADER)
+    )
+
+
 
 # ==============================================
 # Helpers: Units
@@ -396,25 +436,38 @@ def map_columns_improved(df, target_columns):
     column_mapping = {}
     available_cols = df.columns.tolist()
     print("Available columns:", available_cols, "\n")
+
     mapping_patterns = {
-        'Date': ['date','time','datetime','day','created','timestamp','when','dt'],
-        'Receipt': ['receipt','rcpt','ticket','trans','transaction','ref','reference','no'],
+        'Date': ['date','time','datetime','day','created','timestamp','when','dt',
+                 'trans date','transaction date','trx date','posting date'],
+        'Receipt': ['receipt','rcpt','ticket','trans','transaction','ref','reference','no',
+                    'invoice','invoice no','invoice number','doc no','document no'],
         'SO': ['so','sales order','order','order no','order number','sales_order','ord'],
-        'Item Code': ['item','code','sku','product code','prod code','barcode','item_code','product_code','plu'],
-        'Description': ['description','desc','product','item name','name','title','product_name','item_name'],
-        'Expiration Date': ['exp','expiry','expiration','best by','use by','expires','bb'],
-        'Qty': ['qty','quantity','amount','count','qnty','qnt'],
-        'Unit': ['unit','units','uom','pack','packet','packets','box','boxes','pcs','pc','piece','pieces','kg','g','l','ml'],
-        'Discount': ['discount','disc','off','reduction','rebate','promo'],
-        'Sales': ['sales','total','amount','price','value','revenue','sale','net','gross'],
-        'Cost': ['cost','cogs','unit cost','purchase','buy','wholesale'],
-        'Profit': ['profit','margin','gain','net profit','gp'],
-        'Payment': ['payment','pay','method','type','pay_method','tender'],
-        'Cashier ID': ['cashier','user','employee','staff','operator','clerk','cashier_id','user_id','emp'],
+        'Item Code': ['item','code','sku','product code','prod code','barcode','item_code',
+                      'product_code','plu','item no','item number','product id','productid'],
+        'Description': ['description','desc','product','item name','name','title',
+                        'product_name','item_name','product description','item description'],
+        'Expiration Date': ['exp','expiry','expiration','best by','use by','expires','bb',
+                            'expiry date','exp date'],
+        'Qty': ['qty','quantity','amount','count','qnty','qnt','qty sold','quantity sold',
+                'order qty','ordered qty'],
+        'Unit': ['unit','units','uom','pack','packet','packets','box','boxes','pcs','pc','piece','pieces',
+                 'kg','g','l','ml','uom code','unit of measure'],
+        'Discount': ['discount','disc','off','reduction','rebate','promo','less discount','line discount'],
+        'Sales': ['sales','total','amount','price','value','revenue','sale','net','gross',
+                  'line amount','line total','extended','ext amount','net amount',
+                  'net sales','line price','unit price','amount (net)','net line amount'],
+        'Cost': ['cost','cogs','unit cost','purchase','buy','wholesale','line cost','total cost'],
+        'Profit': ['profit','margin','gain','net profit','gp','gross profit'],
+        'Payment': ['payment','pay','method','type','pay_method','tender','tender type','payment type'],
+        'Cashier ID': ['cashier','user','employee','staff','operator','clerk','cashier_id','user_id','emp',
+                       'cashier name','encoded by'],
     }
+
     for target_col, patterns in mapping_patterns.items():
         best_match = None
         best_score = 0
+
         for col in available_cols:
             if col in column_mapping.values():
                 continue
@@ -424,24 +477,149 @@ def map_columns_improved(df, target_columns):
                 score = 100
             else:
                 for pattern in patterns:
-                    pattern_lower = pattern.lower()
-                    if pattern_lower in col_lower:
+                    p = pattern.lower()
+                    if p in col_lower:
                         score = max(score, 80)
-                    elif col_lower in pattern_lower:
+                    elif col_lower in p:
                         score = max(score, 70)
-                    elif any(word in col_lower for word in pattern_lower.split()):
+                    elif any(word in col_lower for word in p.split()):
                         score = max(score, 50)
-                    elif any(word in pattern_lower for word in col_lower.split('_')):
+                    elif any(word in p for word in col_lower.split('_')):
                         score = max(score, 30)
             if score > best_score:
                 best_score = score
                 best_match = col
+
+        # Prefer true “line amount” columns for Sales (avoid generic "total")
+        if target_col == 'Sales':
+            preferred_aliases = {
+                'sales', 'sale', 'sales amount', 'sales_amt',
+                'line amount', 'line total', 'extended', 'ext amount',
+                'net amount', 'net sales', 'line price', 'unit price'
+            }
+            exact = [c for c in available_cols if str(c).strip().lower() in preferred_aliases]
+            if exact:           # <-- exact is always defined now
+                best_match = exact[0]
+                best_score = 101
+
         if best_match and best_score >= 20:
             column_mapping[target_col] = best_match
             print(f"  {target_col} <- '{best_match}' (confidence: {best_score}%)")
         else:
             print(f"  {target_col} <- NO MATCH FOUND (best was '{best_match}' with {best_score}%)")
+
+    print("Final column mapping:", column_mapping)
     return column_mapping
+
+
+def _parse_money_series(s: pd.Series) -> pd.Series:
+    """
+    Parse money-like strings to numbers, handling:
+      (1,234.56) -> -1234.56
+      1,234.56-  -> -1234.56
+      'CR' (credit) -> negative; 'DR' -> positive
+      EU decimal comma: 1.234,56 -> 1234.56
+    """
+    if s is None:
+        return pd.Series(dtype='float64')
+
+    x = s.astype(str).str.strip()
+    # accounting negatives
+    x = x.str.replace(r'^\(([^)]+)\)$', r'-\1', regex=True)          # (123.45) -> -123.45
+    x = x.str.replace(r'^\s*([0-9.,]+)\s*-\s*$', r'-\1', regex=True) # 123.45-  -> -123.45
+    # CR/DR markers
+    has_cr = x.str.contains(r'\bCR\b', case=False, regex=True)
+    x = x.str.replace(r'\b[CD]R\b', '', regex=True, case=False).str.strip()
+    x = x.mask(has_cr, '-' + x)
+    # keep digits, dot, comma, minus
+    x = x.str.replace(r'[^\d,.\-]', '', regex=True)
+
+    # if one comma and no dot -> treat comma as decimal; else remove commas
+    def _commas_to_decimal(t):
+        if t.count(',') == 1 and t.count('.') == 0:
+            t = t.replace('.', '')
+            t = t.replace(',', '.')
+            return t
+        return t.replace(',', '')
+    x = x.apply(_commas_to_decimal)
+
+    return pd.to_numeric(x, errors='coerce')
+
+def _recover_sales_if_empty(df_final, df_clean, column_mapping):
+    """
+    Populate df_final['Sales'] when mapping missed it or mapped a useless column.
+    Treat 'empty' as: all NaN OR all zeros. Prefer true line-amount columns.
+    Falls back to 'Payment' when it clearly looks line-level (not a repeated receipt total).
+    """
+    if 'Sales' not in df_final.columns:
+        df_final['Sales'] = pd.NA
+
+    def _nonzero_cnt(s):
+        x = pd.to_numeric(s, errors='coerce')
+        return (x.fillna(0).abs() > 1e-9).sum()
+
+    # If Sales already has real numbers, keep it
+    if _nonzero_cnt(df_final['Sales']) > 0:
+        return df_final
+
+    # 1) Literal column names that usually hold line amounts
+    literal_candidates = {
+        'sales', 'sale', 'sales amount', 'sales_amt',
+        'line amount', 'line total', 'extended', 'ext amount',
+        'net amount', 'net sales', 'line price', 'unit price'
+    }
+    for col in df_clean.columns:
+        if str(col).strip().lower() in literal_candidates:
+            parsed = _parse_money_series(df_clean[col])
+            if (parsed.fillna(0).abs() > 1e-9).any():
+                df_final['Sales'] = parsed
+                print(f"🔎 Recovered Sales from raw column '{col}' ({parsed.notna().sum()} values).")
+                return df_final
+
+    # 2) Regex fallback (but avoid a bare 'total')
+    candidates = re.compile(
+        r'(sales?(?!\s*tax)|sale\s*amount|sales?\s*(amount|value|price)|'
+        r'line\s*(amount|total)|extended|ext|net\s*(amount|total|sales?)|'
+        r'line\s*price|unit\s*price)',
+        re.I
+    )
+    reserved = set(v for v in column_mapping.values() if v is not None)
+    best_col, best_series, best_non_null = None, None, -1
+    for col in df_clean.columns:
+        if col in reserved:
+            continue
+        if not candidates.search(str(col)):
+            continue
+        parsed = _parse_money_series(df_clean[col])
+        nn = parsed.notna().sum()
+        if nn > best_non_null:
+            best_col, best_series, best_non_null = col, parsed, nn
+    if best_series is not None and (best_series.fillna(0).abs() > 1e-9).any():
+        df_final['Sales'] = best_series
+        print(f"🔎 Recovered Sales from raw column '{best_col}' ({best_non_null} values).")
+        return df_final
+
+    # 3) Heuristic: use Payment if it behaves like a line amount (varies within a receipt)
+    if 'Payment' in df_final.columns:
+        pay = _parse_money_series(df_final['Payment'])
+        if (pay.fillna(0).abs() > 1e-9).any():
+            if 'Receipt' in df_final.columns:
+                uniq_per_receipt = df_final.groupby('Receipt')['Payment'].nunique(dropna=True)
+                # If ≥30% of receipts have >1 unique Payment value, treat it as line-level
+                if (uniq_per_receipt > 1).mean() >= 0.30:
+                    df_final['Sales'] = pay
+                    print("🔎 Recovered Sales from 'Payment' (appears to be line-level).")
+                    return df_final
+                else:
+                    print("⚠ Skipped Payment fallback: looks like a repeated receipt total.")
+            else:
+                df_final['Sales'] = pay
+                print("🔎 Recovered Sales from 'Payment' (no receipt grouping to check).")
+                return df_final
+
+    print("⚠ Could not recover Sales from raw columns.")
+    return df_final
+
 
 def clean_data_types_improved(df):
     print("\nCLEANING DATA TYPES:")
@@ -483,6 +661,7 @@ def clean_data_types_improved(df):
         df_clean['Expiration Date'] = df_clean['Expiration Date'].apply(lambda x: pd.NA if (isinstance(x, str) and x.strip()=='') else x)
 
     # Text columns (includes Unit)
+        # Text columns (includes Unit)
     string_cols = ['Receipt', 'SO', 'Item Code', 'Description', 'Payment', 'Cashier ID', 'Unit']
     for col in string_cols:
         if col in df_clean.columns:
@@ -496,7 +675,51 @@ def clean_data_types_improved(df):
             cleaned_count = df_clean[col].notna().sum()
             print(f"  {col}: {original_count} -> {cleaned_count} valid values")
 
+            if col == 'Item Code':
+                df_clean[col] = df_clean[col].str.strip().str.upper()
+
+    # Recompute Profit once (after the loop)
+    if {'Sales', 'Cost'}.issubset(df_clean.columns):
+        calc_profit = pd.to_numeric(df_clean['Sales'], errors='coerce') - pd.to_numeric(df_clean['Cost'], errors='coerce')
+        if 'Profit' not in df_clean.columns or df_clean['Profit'].isna().any():
+            df_clean['Profit'] = df_clean['Profit'].fillna(calc_profit)
+
     return df_clean
+
+
+
+def classify_txn_type(row):
+    # default
+    t = "SALE"
+    desc = str(row.get('Description', '') or '').lower()
+    code = str(row.get('Item Code', '') or '').lower()
+    qty  = pd.to_numeric(row.get('Qty', pd.NA), errors='coerce')
+
+    # adjustments keywords (if they survived filters)
+    if re.search(r'(discount|void|round(?:ing|[-\s]*off)|price\s*adj|adjustment|rebate|change|senior|pwd)', desc):
+        return "ADJUSTMENT"
+
+    # returns: negative qty or obvious words
+    if (pd.notna(qty) and qty < 0) or re.search(r'(return|refund|rtn|rtv)', desc):
+        return "RETURN"
+
+    return t
+
+def _row_hash_fn(r):
+    keys = [
+        str(r.get('Date', '')).strip(),
+        str(r.get('Receipt', '')).strip(),
+        str(r.get('SO', '')).strip(),
+        str(r.get('Item Code', '')).strip(),
+        str(r.get('Qty', '')).strip(),
+        str(r.get('Sales', '')).strip(),
+        str(r.get('Cost', '')).strip(),
+    ]
+    concat = '|'.join(keys)
+    # short, deterministic string id:
+    return pd.util.hash_pandas_object(pd.Series(concat)).astype(str).iloc[0]
+
+
 
 def clean_dataframe_improved(df):
     print("\n" + "="*50)
@@ -563,6 +786,23 @@ def clean_dataframe_improved(df):
             df_final[target_col] = pd.NA
             print(f"⚠ Created empty column for '{target_col}' (no source found)")
     df_final['_row_id'] = df_clean['_row_id'].copy()
+
+    # --- sanity: did mapping leave everything empty in key fields?
+    important = ['Item Code','Description','Qty','Sales','Cost']
+    present = [c for c in important if c in df_final.columns]
+    if present:
+        pct_all_na = (df_final[present].isna().all(axis=1)).mean()
+        if pct_all_na > 0.95:
+            print("🚨 WARNING: >95% of rows have all important fields empty after mapping.")
+            print("Columns in raw file:", list(df.columns))
+            print("Column mapping used:", column_mapping)
+            # Return what we have so you can inspect it instead of dropping to empty
+            return df_final, pd.DataFrame(columns=df_final.columns.tolist() + ['error_reason','error_stage'])
+
+
+    # 👉 recover Sales before unit/type coercions
+    df_final = _recover_sales_if_empty(df_final, df_clean, column_mapping)
+
 
     # Project early removals into target schema so the error file is consistent
     errors_aligned = []
@@ -662,11 +902,18 @@ def clean_dataframe_improved(df):
         print("\nSample of final cleaned data:")
         print(df_final.head().to_string())
 
-    # Drop helper id from the cleaned output (keep it in errors)
+        # Drop helper id from the cleaned output (keep it in errors)
     if '_row_id' in df_final.columns:
         df_final = df_final.drop(columns=['_row_id'])
 
+    # --- deterministic RowHash for idempotent loads ---
+    df_final['RowHash'] = df_final.apply(_row_hash_fn, axis=1)
+
+    # --- classify transaction type (optional but useful) ---
+    df_final['TxnType'] = df_final.apply(classify_txn_type, axis=1)
+
     return df_final, errors_all
+
 
 # ==============================================
 # I/O helpers
@@ -783,55 +1030,68 @@ def get_data_source():
 def fetch_and_clean_sales_data(source):
     csv_content = load_data_from_source(source)
 
-    lines = csv_content.strip().split('\n')
-    print(f"Total lines in file: {len(lines)}")
-    print("First 10 lines (before skipping):")
-    for i, line in enumerate(lines[:10]):
-        print(f"Line {i}: {line}")
+    # --- Strict header find ---
+    header_row = analyze_csv_structure_strict(csv_content)
+    lines = csv_content.splitlines()
+    csv_from_header = "\n".join(lines[header_row:])
 
-    # Skip first 5 rows per prior requirement
-    if len(lines) > 5:
-        csv_from_row_6 = '\n'.join(lines[5:])
-        print(f"\nSkipping first 5 rows. Processing from line 6 onwards...")
-        remaining_lines = lines[5:]
-        for i, line in enumerate(remaining_lines[:5]):
-            print(f"Line {i+6}: {line}")
-    else:
-        print("Warning: File has 5 or fewer lines!")
-        csv_from_row_6 = csv_content
-
+    # Read using the found header row (first line of the slice = header)
     try:
-        df_raw = pd.read_csv(StringIO(csv_from_row_6))
-        print(f"Successfully read CSV with shape: {df_raw.shape}")
+        df_raw = pd.read_csv(StringIO(csv_from_header))
     except Exception as e:
-        print(f"CSV read failed: {e}")
-        try:
-            df_raw = pd.read_csv(StringIO(csv_from_row_6), sep=None, engine='python')
-            print(f"Successfully read CSV with auto-separator with shape: {df_raw.shape}")
-        except Exception as e2:
-            print(f"All CSV read attempts failed: {e2}")
-            raise Exception("Could not parse CSV file")
+        # fallback with python engine if needed
+        df_raw = pd.read_csv(StringIO(csv_from_header), sep=None, engine="python")
 
-    print("Raw DataFrame columns:", df_raw.columns.tolist())
-    print(f"Raw DataFrame shape: {df_raw.shape}")
-    print("\nFirst few rows of raw data:")
+    # Validate exact header match (order + names)
+    got = [ _norm_col(c) for c in df_raw.columns.tolist() ]
+    need = [ _norm_col(c) for c in REQUIRED_HEADER ]
+    if got != need:
+        raise ValueError(
+            "Invalid columns. Expected EXACTLY:\n  "
+            + ", ".join(REQUIRED_HEADER)
+            + "\nBut got:\n  "
+            + ", ".join(df_raw.columns.astype(str))
+        )
+
+    print("Strict header accepted. Columns:", df_raw.columns.tolist())
+    print("Raw DataFrame shape:", df_raw.shape)
     print(df_raw.head())
 
+    # proceed with your pipeline
     df_cleaned, errors_df = clean_dataframe_improved(df_raw)
     return df_cleaned, errors_df
 
+
 if __name__ == "__main__":
+    # Default sample URL (kept for local tests)
     default_url = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/testdata-D3IKHaVvsV4pdgUGLj27PXAagiN6WO.csv"
+    NON_INTERACTIVE = os.getenv("NON_INTERACTIVE", "0") == "1"
+
+    # IMPORTANT: Set this once in your shell/env:
+    #   Local pgAdmin first:
+    #   export DATABASE_URL="postgresql://postgres:admin@localhost:5432/CAPSTONE"
+    #
+    #   Neon later (example):
+    #   export DATABASE_URL="postgresql://USER:PASSWORD@YOURHOST.neon.tech/CAPSTONE?sslmode=require"
+
     try:
+        # -------- source selection (interactive for local, env/CLI for servers) --------
         if len(sys.argv) > 1:
             data_source = sys.argv[1]
             print(f"Using data source from command line: {data_source}")
+        elif NON_INTERACTIVE:
+            print("Running in NON_INTERACTIVE mode...")
+            data_source = default_url
         else:
             data_source = get_data_source()
             if not data_source:
                 print("No data source provided. Using default test data...")
                 data_source = default_url
+
+        # -------- CLEAN --------
         cleaned_df, errors_df = fetch_and_clean_sales_data(data_source)
+
+        # Save local artifacts (handy for debugging / audit)
         if data_source.startswith(('http://', 'https://')):
             output_file = 'cleaned_sales_data_from_url.csv'
         else:
@@ -840,13 +1100,33 @@ if __name__ == "__main__":
         save_cleaned_data(cleaned_df, output_file)
         errors_file = os.path.splitext(output_file)[0] + '_errors.xlsx'
         save_error_report(errors_df, errors_file)
+
         print(f"\n✅ Data cleaning completed successfully!")
         print(f"📁 Output file: {output_file}")
-        view_sample = input("\nView a sample of the cleaned data? (y/n): ").strip().lower()
-        if view_sample == 'y':
-            print("\nSample of cleaned data:")
-            print("=" * 80)
-            print(cleaned_df.head(10).to_string(index=False))
+
+        # -------- LOAD (Postgres CAPSTONE) --------
+        # Use the original filename/URL (good for ops.etl_runs)
+        file_name_for_run = data_source if data_source else output_file
+
+        print("\n⏩ Loading cleaned data into Postgres (CAPSTONE)...")
+        # If you haven't run create_schemas_tables.sql yet, run it once manually,
+        # OR pass ensure_schema_once=True below to let the loader create it.
+        run_id = run_full_load(
+            file_name=file_name_for_run,
+            cleaned_df=cleaned_df,
+            errors_df=errors_df,
+            ensure_schema_once=False   # set to True ONLY the first time if you didn't run the SQL
+        )
+        print(f"✅ ETL load completed. run_id = {run_id}")
+
+        # Optional preview (skip in NON_INTERACTIVE mode)
+        if not NON_INTERACTIVE:
+            view_sample = input("\nView a sample of the cleaned data? (y/n): ").strip().lower()
+            if view_sample == 'y':
+                print("\nSample of cleaned data:")
+                print("=" * 80)
+                print(cleaned_df.head(10).to_string(index=False))
+
     except Exception as e:
         print(f"❌ Error occurred: {str(e)}")
         import traceback
