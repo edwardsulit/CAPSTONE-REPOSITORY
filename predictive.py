@@ -18,7 +18,7 @@ plt.style.use('seaborn-v0_8-whitegrid')
 sns.set_palette("deep")
 
 # Load the data
-df = pd.read_csv("generated_sales_data.csv")
+df = pd.read_csv("cleaned_sales_data.csv")
 
 # Initial data exploration
 print("Original columns:", df.columns.tolist())
