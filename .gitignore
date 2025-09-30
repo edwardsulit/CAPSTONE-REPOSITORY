@@ -212,3 +212,5 @@ venv/
 serviceAccountKey.json
 __pycache__/
 staticfiles/
+cleaned_*.csv
+*_errors.xlsx
