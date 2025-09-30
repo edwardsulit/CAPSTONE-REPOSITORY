@@ -3,8 +3,7 @@ import {
   Home, 
   ShoppingCart, 
   Package, 
-  FileBarChart, 
-  Users, 
+  FileBarChart,  
   Settings,
   Bell
 } from "lucide-react";
@@ -19,7 +18,6 @@ const navigation = [
   { id: 'sales', name: 'Sales', icon: ShoppingCart },
   { id: 'inventory', name: 'Inventory', icon: Package },
   { id: 'reports', name: 'Reports', icon: FileBarChart },
-  { id: 'users', name: 'Users', icon: Users },
   { id: 'settings', name: 'Settings', icon: Settings },
 ];
 
@@ -38,9 +36,6 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-4 py-4">
-        <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-2 py-2">
-          Payments
-        </div>
         {navigation.map((item) => {
           const Icon = item.icon;
           return (
@@ -60,20 +55,6 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           );
         })}
       </nav>
-
-      {/* User Section */}
-      <div className="border-t border-sidebar-border p-4">
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-            <span className="text-sm font-medium">U</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-sidebar-foreground">Username</p>
-            <p className="text-xs text-muted-foreground">ID: 1543907</p>
-          </div>
-          <Bell className="h-4 w-4 text-muted-foreground" />
-        </div>
-      </div>
-    </div>
+</div>
   );
 }
