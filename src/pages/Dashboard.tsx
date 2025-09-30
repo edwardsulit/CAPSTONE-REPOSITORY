@@ -43,7 +43,7 @@ function HomePage() {
           </div>
           <Button variant="outline" size="sm" className="shadow-soft">
             <FileText className="h-4 w-4 mr-2" />
-            Export Report
+            Import Report
           </Button>
         </div>
       </div>
